@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>商铺分类挑战 · 姑苏繁华图</title>
+<link rel="stylesheet" href="common.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── 游戏布局 ──────────────────────────────────────── */
+.game-area {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: calc(100vh - 180px);
+}
+
+/* ─── 状态栏 ────────────────────────────────────────── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .9rem;
+}
+.status-item .label { color: var(--text-muted); }
+.status-item .value {
+  font-weight: 700;
+  color: var(--cinnabar);
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+}
+.status-item .value.gold { color: var(--gold); }
+
+/* ─── 分类筐区域 ────────────────────────────────────── */
+.bins-area {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.bin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  background: var(--bg-card);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  min-height: 80px;
+  position: relative;
+}
+.bin:hover {
+  border-color: var(--gold);
+  background: rgba(212,175,55,.05);
+}
+.bin.highlight {
+  border-color: var(--cinnabar);
+  background: rgba(178,34,34,.06);
+  animation: pulse .4s ease;
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+.bin-icon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+.bin-name {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bin-count {
+  font-size: .7rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ─── 商铺招牌区域 ──────────────────────────────────── */
+.shop-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  min-height: 180px;
+}
+
+.shop-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 32px;
+  background: var(--bg-card);
+  border: 2px solid var(--cinnabar);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(178,34,34,.15);
+  animation: shopEnter .4s ease;
+  cursor: default;
+}
+@keyframes shopEnter {
+  from { opacity: 0; transform: translateY(20px) scale(.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.shop-card.selected {
+  border-color: var(--gold);
+  box-shadow: 0 4px 20px rgba(212,175,55,.3);
+  transform: scale(1.05);
+}
+.shop-name {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--cinnabar);
+  font-weight: 700;
+  letter-spacing: .05em;
+}
+.shop-hint {
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.shop-empty {
+  font-size: .9rem;
+  color: var(--text-muted);
+}
+
+/* ─── 提示文字 ──────────────────────────────────────── */
+.instruction {
+  text-align: center;
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* ─── 倒计时大字 ────────────────────────────────────── */
+.countdown-big {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--cinnabar);
+  margin: 20px 0;
+  animation: countPulse 1s ease infinite;
+}
+@keyframes countPulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+
+/* ─── 响应式 ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .bins-area { grid-template-columns: repeat(2, 1fr); }
+  .status-bar { flex-wrap: wrap; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="game-header">
+  <button class="btn-back" onclick="goBack()">&#8592; 返回</button>
+  <h1>商铺分类<span>挑战</span></h1>
+  <div style="width:60px"></div>
+</div>
+
+<div class="game-container">
+  <!-- 开始画面 -->
+  <div id="screen-start" class="screen active">
+    <div class="screen-icon">🏪</div>
+    <div class="screen-title">商铺分类挑战</div>
+    <div class="screen-subtitle">
+      姑苏繁华图中可辨认市招260余家，涵盖36个行业。屏幕上会出现各种商铺招牌，请你将它归入正确的行业类别。60秒限时，连击加分！
+    </div>
+    <button class="btn btn-primary" onclick="startGame()">开始挑战</button>
+  </div>
+
+  <!-- 倒计时准备 -->
+  <div id="screen-countdown" class="screen">
+    <div class="countdown-big" id="countdownText">3</div>
+    <div style="color:var(--text-muted)">准备好了吗？</div>
+  </div>
+
+  <!-- 游戏画面 -->
+  <div id="screen-play" class="screen">
+    <div class="status-bar">
+      <div class="status-item">
+        <span class="label">得分</span>
+        <span class="value gold" id="scoreValue">0</span>
+      </div>
+      <div class="status-item">
+        <span class="label">连击</span>
+        <span class="value" id="comboValue">0</span>
+      </div>
+      <div class="status-item">
+        <span class="label">已分类</span>
+        <span class="value" id="sortedValue">0</span>
+      </div>
+      <div class="status-item">
+        <span class="label">剩余</span>
+        <span class="value" id="timeValue">60s</span>
+      </div>
+    </div>
+
+    <div class="bins-area" id="binsArea"></div>
+
+    <div class="shop-area" id="shopArea">
+      <div class="shop-empty">即将出现商铺招牌...</div>
+    </div>
+
+    <div class="instruction">点击商铺 → 点击对应分类筐</div>
+  </div>
+
+  <!-- 结果画面 -->
+  <div id="screen-result" class="screen">
+    <div class="screen-icon">🏮</div>
+    <div class="screen-title" id="resultTitle"></div>
+    <div class="score-big" id="resultScore"></div>
+    <div class="divider"></div>
+    <div class="stats-row" id="resultStats"></div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="startGame()">再来一局</button>
+      <button class="btn btn-secondary" onclick="goBack()">返回</button>
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+// ─── 商铺数据（从 COMMERCE_DATA 提取）─────────────────
+const BINS = [
+  { name: '饮食', icon: '🍜', categories: ['饮食'] },
+  { name: '纺织', icon: '🧵', categories: ['纺织'] },
+  { name: '文化', icon: '📚', categories: ['文化'] },
+  { name: '医药', icon: '💊', categories: ['医药'] },
+  { name: '金融', icon: '💰', categories: ['金融'] },
+  { name: '器物日用', icon: '🏺', categories: ['器物', '日用', '其他'] },
+];
+
+// 从 COMMERCE_DATA 衍生的具体商铺名
+const ALL_SHOPS = [
+  { name: '包办酒席', category: '饮食' },
+  { name: '精洁馄饨', category: '饮食' },
+  { name: '三鲜大面', category: '饮食' },
+  { name: '大肉馒头', category: '饮食' },
+  { name: '五簋大菜', category: '饮食' },
+  { name: '太平茶室', category: '饮食' },
+  { name: '松萝茶室', category: '饮食' },
+  { name: '三白酒坊', category: '饮食' },
+  { name: '木渎米烧', category: '饮食' },
+  { name: '烧酒铺', category: '饮食' },
+  { name: '松江大布', category: '纺织' },
+  { name: '太仓棉花', category: '纺织' },
+  { name: '青蓝梭布', category: '纺织' },
+  { name: '震泽绸行', category: '纺织' },
+  { name: '濮院宁绸', category: '纺织' },
+  { name: '汉府八丝贡缎', category: '纺织' },
+  { name: '麻行', category: '纺织' },
+  { name: '染坊', category: '纺织' },
+  { name: '大雅堂书坊', category: '文化' },
+  { name: '名人字画', category: '文化' },
+  { name: '湖笔铺', category: '文化' },
+  { name: '状元考具', category: '文化' },
+  { name: '雅扇铺', category: '文化' },
+  { name: '凤鸣斋琵琶弦子', category: '文化' },
+  { name: '三场名笔', category: '文化' },
+  { name: '川广药材', category: '医药' },
+  { name: '道地药材', category: '医药' },
+  { name: '人参号', category: '医药' },
+  { name: '丸散膏丹', category: '医药' },
+  { name: '万应膏药', category: '医药' },
+  { name: '钱庄', category: '金融' },
+  { name: '兑庄', category: '金融' },
+  { name: '兑换银钱', category: '金融' },
+  { name: '典当行', category: '金融' },
+  { name: '时款瓷器', category: '器物' },
+  { name: '官窑瓷器', category: '器物' },
+  { name: '虎丘名席', category: '器物' },
+  { name: '定织细席', category: '器物' },
+  { name: '桐油生漆', category: '器物' },
+  { name: '精巧锡器', category: '器物' },
+  { name: '成造田器', category: '器物' },
+  { name: '精工竹器', category: '器物' },
+  { name: '进京蜡烛', category: '日用' },
+  { name: '灯笼老店', category: '日用' },
+  { name: '雅式纱灯', category: '日用' },
+  { name: '金华火腿', category: '食品' },  // -> trick: 食品 mapped to 饮食
+  { name: '南京板鸭', category: '食品' },
+  { name: '酱园', category: '食品' },
+  { name: '甜酱小菜', category: '食品' },
+  { name: '各色名烟', category: '其他' },  // -> trick
+  { name: '官盐铺', category: '杂货' },
+  { name: '川广云贵杂货', category: '杂货' },
+  { name: '洋货行', category: '杂货' },
+  { name: '金珠老店', category: '珠宝' },  // -> trick
+  { name: '玉器古玩', category: '珠宝' },
+  { name: '成衣铺', category: '服饰' },   // -> trick
+  { name: '朝靴店', category: '服饰' },
+  { name: '上江青炭', category: '其他' },
+  { name: '船行', category: '其他' },
+  { name: '客寓', category: '其他' },
+  { name: '四时盆景', category: '其他' },
+  { name: '香水浴堂', category: '其他' },
+];
+
+// 将 category 映射到 bin
+function categoryToBin(cat) {
+  for (let i = 0; i < BINS.length; i++) {
+    if (BINS[i].categories.includes(cat)) return i;
+  }
+  return BINS.length - 1; // default to last bin
+}
+
+// ─── 游戏状态 ────────────────────────────────────────
+let shops = [];
+let currentShopIndex = 0;
+let gameScore = 0;
+let combo = 0;
+let maxCombo = 0;
+let sorted = 0;
+let correctCount = 0;
+let timeLeft = 60;
+let timerInterval = null;
+let selectedShop = false;
+const GAME_TIME = 60;
+
+function startGame() {
+  shops = shuffle(ALL_SHOPS);
+  currentShopIndex = 0;
+  gameScore = 0;
+  combo = 0;
+  maxCombo = 0;
+  sorted = 0;
+  correctCount = 0;
+  timeLeft = GAME_TIME;
+  selectedShop = false;
+
+  window.SuzhouGame.name = '商铺分类挑战';
+  window.SuzhouGame.type = 'sort';
+  window.SuzhouGame.start();
+
+  // 3秒倒计时
+  showScreen('screen-countdown');
+  let count = 3;
+  document.getElementById('countdownText').textContent = count;
+  const cdInterval = setInterval(() => {
+    count--;
+    if (count > 0) {
+      document.getElementById('countdownText').textContent = count;
+    } else {
+      clearInterval(cdInterval);
+      showScreen('screen-play');
+      renderBins();
+      showNextShop();
+      startTimer();
+    }
+  }, 1000);
+}
+
+function renderBins() {
+  const area = document.getElementById('binsArea');
+  area.innerHTML = BINS.map((bin, i) => `
+    <div class="bin" id="bin-${i}" onclick="selectBin(${i})">
+      <span class="bin-icon">${bin.icon}</span>
+      <span class="bin-name">${bin.name}</span>
+      <span class="bin-count" id="bin-count-${i}">0</span>
+    </div>
+  `).join('');
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById('timeValue').textContent = timeLeft + 's';
+    if (timeLeft <= 10) {
+      document.getElementById('timeValue').style.color = '#e53935';
+    }
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      endGame();
+    }
+  }, 1000);
+}
+
+function showNextShop() {
+  if (currentShopIndex >= shops.length) {
+    shops = shuffle(ALL_SHOPS);
+    currentShopIndex = 0;
+  }
+
+  selectedShop = false;
+  const shop = shops[currentShopIndex];
+  const area = document.getElementById('shopArea');
+  area.innerHTML = `
+    <div class="shop-card" id="currentShop" onclick="selectShop()">
+      <div class="shop-name">${shop.name}</div>
+      <div class="shop-hint">点击选中，再点分类筐</div>
+    </div>
+  `;
+}
+
+function selectShop() {
+  const card = document.getElementById('currentShop');
+  if (!card) return;
+  selectedShop = !selectedShop;
+  card.classList.toggle('selected', selectedShop);
+}
+
+function selectBin(binIdx) {
+  if (!selectedShop) {
+    showToast('请先点击商铺招牌', 'info');
+    return;
+  }
+
+  const shop = shops[currentShopIndex];
+  const correctBin = categoryToBin(shop.category);
+  const isCorrect = binIdx === correctBin;
+
+  sorted++;
+  const binEl = document.getElementById(`bin-${binIdx}`);
+  binEl.classList.add('highlight');
+  setTimeout(() => binEl.classList.remove('highlight'), 400);
+
+  if (isCorrect) {
+    combo++;
+    if (combo > maxCombo) maxCombo = combo;
+    correctCount++;
+    const bonus = Math.min(combo, 5); // combo 最多 x5
+    const points = 10 + bonus * 2;
+    gameScore += points;
+    showToast(`+${points}分${combo >= 3 ? ' 🔥x' + combo : ''}`, 'success');
+    if (combo >= 3) showCombo('连击 x' + combo);
+  } else {
+    combo = 0;
+    showToast(`答错了，应归入"${BINS[correctBin].name}"`, 'error');
+  }
+
+  // 更新筐计数
+  const countEl = document.getElementById(`bin-count-${binIdx}`);
+  countEl.textContent = parseInt(countEl.textContent || 0) + 1;
+
+  // 更新状态
+  document.getElementById('scoreValue').textContent = gameScore;
+  document.getElementById('comboValue').textContent = combo;
+  document.getElementById('sortedValue').textContent = sorted;
+
+  currentShopIndex++;
+  setTimeout(showNextShop, 300);
+}
+
+function endGame() {
+  clearInterval(timerInterval);
+
+  window.SuzhouGame.getScore = () => ({
+    total: sorted, correct: correctCount, time: GAME_TIME, score: gameScore,
+  });
+
+  let title;
+  if (gameScore >= 200)      title = '商铺掌柜！';
+  else if (gameScore >= 120) title = '行家里手';
+  else if (gameScore >= 60)  title = '初入商行';
+  else                       title = '再逛逛吧';
+
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultScore').innerHTML = `${gameScore}<small>分</small>`;
+  document.getElementById('resultStats').innerHTML = `
+    <div class="stat-item"><span class="stat-value">${correctCount}/${sorted}</span><span class="stat-label">正确率</span></div>
+    <div class="stat-item"><span class="stat-value">x${maxCombo}</span><span class="stat-label">最高连击</span></div>
+    <div class="stat-item"><span class="stat-value">${sorted}</span><span class="stat-label">已分类</span></div>
+  `;
+
+  showScreen('screen-result');
+}
+
+window.SuzhouGame.reset = () => startGame();
+</script>
+</body>
+</html>

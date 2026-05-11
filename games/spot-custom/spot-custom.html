@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>识姑苏 · 姑苏繁华图</title>
+<link rel="stylesheet" href="../common.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body { background: #0a0a0a; background-image: radial-gradient(ellipse at 30% 40%, rgba(212,175,55,.04) 0%, transparent 60%); }
+.game-header { background: rgba(10,10,10,.85); border-bottom-color: rgba(212,175,55,.15); }
+.game-header h1 { color: rgba(245,240,230,.85); }
+.game-header h1 span { color: var(--cinnabar); }
+.btn-back { color: rgba(245,240,230,.5); border-color: rgba(212,175,55,.2); }
+.btn-back:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ─── 主布局：撑满视口 ─────────────────────────────── */
+.game-container { max-width: 100%; height: calc(100vh - 50px); padding: 0 20px; }
+
+.screen { width: 100%; height: 100%; }
+#screen-start, #screen-result { max-width: 600px; margin: 0 auto; }
+#screen-play {
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+#screen-play.active { display: flex; }
+
+/* ─── 状态栏 ────────────────────────────────────────── */
+.play-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(245,240,230,.06);
+  border: 1px solid rgba(212,175,55,.12);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+.play-status .round { font-size: .8rem; color: rgba(245,240,230,.45); }
+.play-status .score { font-size: .85rem; font-weight: 700; color: var(--gold); }
+
+/* ─── 内容区：左右分栏 ──────────────────────────────── */
+.play-body {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  min-height: 0;
+  overflow: hidden;
+}
+/* 宽图模式：图片在上，内容区横向展开 */
+.play-body.wide-mode {
+  flex-direction: column;
+  gap: 8px;
+}
+.play-body.wide-mode .play-left {
+  flex: none;
+  height: 48%;
+}
+.play-body.wide-mode .play-right {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  flex-direction: row;
+  gap: 12px;
+}
+.play-body.wide-mode .play-right .clue-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.play-body.wide-mode .play-right .choices,
+.play-body.wide-mode .play-right .feedback {
+  flex: 1;
+  min-height: 0;
+}
+.play-body.wide-mode .play-right .choices {
+  align-content: start;
+}
+
+/* ── 左栏：图片 ─────────────────────────────────────── */
+.play-left {
+  flex: 5;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.scene-visual {
+  flex: 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.03);
+}
+/* 图片贴合容器 */
+.scene-visual .img-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.scene-visual .img-wrap img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: auto;
+}
+/* 普通图片（宽高比适中）：居中贴合 */
+.scene-visual .img-wrap.fit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scene-visual .img-wrap.fit img {
+  position: static;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  object-fit: contain;
+}
+/* 宽图滚动 */
+.scene-visual .img-wrap.scroll-pan {
+  cursor: grab;
+}
+.scene-visual .img-wrap.scroll-pan img {
+  animation: panScroll var(--pan-dur, 40s) linear infinite alternate;
+}
+@keyframes panScroll {
+  0%   { transform: translateX(0); }
+  5%   { transform: translateX(0); }
+  95%  { transform: translateX(var(--pan-end, -50%)); }
+  100% { transform: translateX(var(--pan-end, -50%)); }
+}
+.scene-visual .scene-label {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(10,10,10,.7);
+  backdrop-filter: blur(6px);
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: .75rem;
+  color: rgba(245,240,230,.8);
+  border: 1px solid rgba(212,175,55,.2);
+}
+.scene-visual .reveal-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,.6);
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s ease;
+}
+.scene-visual .reveal-overlay.show { opacity: 1; }
+
+/* ── 右栏：线索+选项/结果 ───────────────────────────── */
+.play-right {
+  flex: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 线索 */
+.clue-box {
+  background: rgba(245,240,230,.06);
+  border: 1px solid rgba(212,175,55,.12);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  flex-shrink: 0;
+}
+.clue-level {
+  font-size: .65rem;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 4px;
+  opacity: .8;
+}
+.clue-text {
+  font-family: var(--font-serif);
+  font-size: .88rem;
+  color: rgba(245,240,230,.8);
+  line-height: 1.6;
+}
+.clue-text .cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--cinnabar);
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.hint-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 5px 12px;
+  font-size: .75rem;
+  color: var(--gold);
+  background: rgba(212,175,55,.06);
+  border: 1px solid rgba(212,175,55,.2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.hint-btn:hover { background: rgba(212,175,55,.12); }
+.hint-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+/* 选项 */
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.choice-btn {
+  padding: 10px 6px;
+  font-family: var(--font-serif);
+  font-size: .85rem;
+  color: rgba(245,240,230,.8);
+  background: rgba(245,240,230,.05);
+  border: 1.5px solid rgba(212,175,55,.15);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+.choice-btn:hover:not(.disabled) {
+  border-color: var(--cinnabar);
+  background: rgba(178,34,34,.08);
+}
+.choice-btn.correct {
+  border-color: #4caf50;
+  background: rgba(76,175,80,.1);
+  color: #81c784;
+  font-weight: 700;
+}
+.choice-btn.wrong {
+  border-color: #e53935;
+  background: rgba(229,57,53,.08);
+  color: #ef9a9a;
+}
+.choice-btn.disabled { pointer-events: none; opacity: .4; }
+
+/* 答题后反馈区（替换选项） */
+.feedback {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: fadeIn .3s ease;
+  min-height: 0;
+}
+.feedback .knowledge-card {
+  background: rgba(245,240,230,.06);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 8px 12px;
+  flex: 1;
+  min-height: 0;
+}
+.feedback .kc-tag {
+  display: inline-block;
+  font-size: .6rem;
+  color: var(--gold);
+  background: rgba(212,175,55,.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.feedback .kc-text {
+  font-size: .8rem;
+  color: rgba(245,240,230,.7);
+  line-height: 1.6;
+}
+.feedback .next-btn {
+  padding: 8px 20px;
+  font-family: var(--font-sans);
+  font-size: .85rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--cinnabar);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.feedback .next-btn:hover { background: var(--cinnabar-light); }
+
+/* ─── 开始/结束画面 ──────────────────────────────────── */
+#screen-start, #screen-result {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+#screen-start.active, #screen-result.active { display: flex; }
+
+.screen-icon { font-size: 2.5rem; margin-bottom: 4px; }
+.screen-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  color: rgba(245,240,230,.9);
+  letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+.screen-subtitle {
+  font-size: .85rem;
+  color: rgba(245,240,230,.45);
+  max-width: 400px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.score-big {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  margin: 4px 0;
+}
+.score-big small { font-size: 1rem; color: rgba(245,240,230,.4); font-weight: 400; }
+
+.divider { width: 40px; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 10px auto; }
+
+.stats-row { display: flex; gap: 10px; justify-content: center; margin: 8px 0; }
+.stat-item { display: flex; flex-direction: column; align-items: center; padding: 8px 14px; background: rgba(245,240,230,.05); border: 1px solid rgba(212,175,55,.12); border-radius: var(--radius-sm); min-width: 70px; }
+.stat-value { font-size: 1.2rem; font-weight: 700; color: var(--gold); font-family: var(--font-serif); }
+.stat-label { font-size: .65rem; color: rgba(245,240,230,.35); margin-top: 2px; }
+
+.btn-group { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+.btn-primary { background: var(--cinnabar); color: #fff; padding: 10px 24px; border: none; border-radius: var(--radius-sm); font-size: .9rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+.btn-primary:hover { background: var(--cinnabar-light); }
+.btn-secondary { background: rgba(245,240,230,.06); color: rgba(245,240,230,.5); border: 1px solid rgba(212,175,55,.15); padding: 10px 24px; border-radius: var(--radius-sm); font-size: .9rem; cursor: pointer; transition: var(--transition); }
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── 响应式：窄屏改为上下布局 ──────────────────────── */
+@media (max-width: 640px) {
+  .play-body, .play-body.wide-mode { flex-direction: column; }
+  .play-left, .play-body.wide-mode .play-left { flex: none; max-height: 35vh; height: auto; }
+  .play-right { flex: 1; overflow-y: auto; }
+}
+</style>
+</head>
+<body>
+
+<div class="game-header">
+  <button class="btn-back" onclick="goBack()">&#8592; 返回画卷</button>
+  <h1><span>识姑苏</span></h1>
+  <div style="width:60px"></div>
+</div>
+
+<div class="game-container">
+  <!-- 开始画面 -->
+  <div id="screen-start" class="screen active">
+    <div class="screen-icon">🏮</div>
+    <div class="screen-title">识姑苏</div>
+    <div class="screen-subtitle">
+      小顺初来乍到，对姑苏城里的一切好奇得很。看看画中的场景，根据线索帮他认认这是什么地方吧。<br>线索从模糊到具体，越早认出来，小顺越佩服你！
+    </div>
+    <button class="btn-primary" onclick="startGame()">开始指点小顺</button>
+  </div>
+
+  <!-- 游戏画面 -->
+  <div id="screen-play" class="screen">
+    <div class="play-status">
+      <span class="round" id="roundInfo"></span>
+      <span class="score" id="scoreDisplay">0 分</span>
+    </div>
+    <div class="play-body">
+      <div class="play-left">
+        <div class="scene-visual" id="sceneVisual">
+          <div class="img-wrap" id="imgWrap">
+            <img id="sceneImage" src="" alt="场景图片">
+          </div>
+          <span class="scene-label" id="sceneLabel">这是哪里？</span>
+          <div class="reveal-overlay" id="revealOverlay"></div>
+        </div>
+      </div>
+      <div class="play-right">
+        <div class="clue-box">
+          <div class="clue-level" id="clueLevel">线索 1/3</div>
+          <div class="clue-text" id="clueText"></div>
+          <button class="hint-btn" id="hintBtn" onclick="useHint()">再给条线索</button>
+        </div>
+        <div class="choices" id="choicesContainer"></div>
+        <div id="feedbackArea"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果画面 -->
+  <div id="screen-result" class="screen">
+    <div class="screen-icon" id="resultIcon"></div>
+    <div class="screen-title" id="resultTitle"></div>
+    <div class="score-big" id="resultScore"></div>
+    <div class="divider"></div>
+    <div class="screen-subtitle" id="resultDesc" style="margin-bottom:8px"></div>
+    <div class="stats-row" id="resultStats"></div>
+    <div class="btn-group">
+      <button class="btn-primary" onclick="startGame()">再来一局</button>
+      <button class="btn-secondary" onclick="goBack()">返回画卷</button>
+    </div>
+  </div>
+</div>
+
+<script src="../common.js"></script>
+<script>
+// 嵌入父页面时，返回按钮通知父页面关闭游戏
+if (window.parent !== window) {
+  window._origGoBack = typeof goBack === 'function' ? goBack : null;
+  goBack = function() {
+    window.parent.postMessage({ type: 'closeGame' }, '*');
+  };
+}
+
+// ─── 场景数据 ────────────────────────────────────────
+const SCENE_DATA = [
+  {
+    answer: '灵岩山雅集',
+    category: '科举教育',
+    clues: [
+      '小顺看到山腰处几位文人席地而坐，面前铺满了东西',
+      '餐垫上摆着笔墨茶点，有人执笔凝思，有人举杯望远',
+      '灵岩山中文人雅集，铺餐垫设笔墨茶点，边赏景边联句赋诗',
+    ],
+    knowledge: '灵岩山雅集展现了清代苏州文人的山游雅趣。画中文人雇挑夫将茶点笔墨扛上山，席地而坐联句赋诗。这种风雅背后，是挑夫的脚力和不菲的花销。小顺心想：淮安山头可没见过这般雅致。',
+    image: 'images/spot-01.jpg',
+  },
+  {
+    answer: '府衙府试',
+    category: '科举教育',
+    clues: [
+      '小顺远远望见衙门内披红挂彩，数百人齐聚一堂',
+      '"天开文运"横匾高悬，两庑考场中密密麻麻坐满了人',
+      '苏州府衙内正在举行童生府试，考生执笔蘸墨，将毕生所学倾注于答卷',
+    ],
+    knowledge: '府试是清代科举的入门考试。徐扬跋文"三条烛焰，或抡才于童子之场"描述的正是此景。小顺虽不识字，却也听说过"朝为田舍郎，暮登天子堂"的故事。',
+    image: 'images/spot-02.jpg',
+  },
+  {
+    answer: '木渎三弦弹唱',
+    category: '戏曲丝竹',
+    clues: [
+      '小顺路过一座水乡小镇，桥畔传来悠扬的丝竹之声',
+      '斜桥畔厅堂内，二人对坐弹奏着什么乐器',
+      '木渎镇斜桥畔，二人弹奏三弦琵琶，丝竹声声，正是苏州评弹雅韵',
+    ],
+    knowledge: '苏州评弹是用吴侬软语表演的说唱艺术，以三弦和琵琶为主要伴奏乐器。小顺听不大懂吴侬软语，却也被那曲调打动了——比扬州茶馆里唱的还好听。',
+    image: 'images/spot-03.jpg',
+  },
+  {
+    answer: '遂初园堂会',
+    category: '戏曲丝竹',
+    clues: [
+      '小顺透过园门窥见里面灯火辉煌，宾客满座',
+      '补闲堂内座席环列，戏台上正演一出戏',
+      '木渎遂初园补闲堂中昆曲堂会，演出《白兔记》"月色辉煌"一出',
+    ],
+    knowledge: '堂会是在私家园林中举办的戏曲演出，是清代苏州富贵人家的雅集方式。小顺在门外听见几句唱词，心想：等攒够银子，也要买票进去坐一回。',
+    image: 'images/spot-04.jpg',
+  },
+  {
+    answer: '春台社戏',
+    category: '戏曲丝竹',
+    clues: [
+      '小顺走到一座山脚下，只见人山人海，热闹非凡',
+      '扎彩戏台前观众数百人，妇女坐在单独席棚中观看',
+      '狮山脚下社戏开台，正演《红梅记》中的《打花鼓》一折',
+    ],
+    knowledge: '社戏是民间在庙会、节庆时搭台演出的戏曲，比堂会更接地气。"春台"指春季搭台。小顺最爱这等热闹，早早就占了前排的好位置。',
+    image: 'images/spot-05.jpg',
+  },
+  {
+    answer: '阊门走绳索',
+    category: '戏曲丝竹',
+    clues: [
+      '小顺来到城墙下，只见围观如潮，楼上的人纷纷推窗观看',
+      '一女子手持长竹竿，在高空中做着惊险动作',
+      '阊门月城南侧，女子手持长竹竿在绳索上行走如履平地',
+    ],
+    knowledge: '走绳索是清代苏州常见的民间百戏之一，表演者多为女性。小顺看得手心冒汗——在船上走甲板都晃，人家可是走绳子啊！',
+    image: 'images/spot-06.jpg',
+  },
+  {
+    answer: '木渎迎亲船队',
+    category: '婚礼习俗',
+    clues: [
+      '小顺看见河中彩船缓缓驶过，乐声阵阵',
+      '船队前列擎着写着官衔字样的纱灯，船上花轿引人注目',
+      '木渎河面迎亲船队，"翰林院""状元及第"纱灯是为婚俗借官衔壮声势',
+    ],
+    knowledge: '清代苏州民间嫁娶有"借官衔以壮声势"的习俗。小顺追着船队在岸上跑，只听"噗通"一声——有人往河里撒喜钱！他眼疾手快捞到两枚铜板。',
+    image: 'images/spot-07.jpg',
+  },
+  {
+    answer: '黄鹂坊桥婚礼',
+    category: '婚礼习俗',
+    clues: [
+      '小顺拐进一条弄堂，只见大红灯笼高挂，喜气洋洋',
+      '花轿停在院中，新郎穿着礼服正在行礼',
+      '山塘街黄鹂坊桥弄中正在办婚礼，新郎跪拜父母，嫁妆陈列',
+    ],
+    knowledge: '清代苏州婚礼讲究"六礼"：纳采、问名、纳吉、纳征、请期、亲迎。小顺跟一群孩子挤在门口讨喜糖，捡了满满一兜花生红枣，开心得跟过年似的。',
+    image: 'images/spot-08.jpg',
+  },
+  {
+    answer: '木渎遂初园',
+    category: '园林胜景',
+    clues: [
+      '小顺望见一座精心营建的园林，楼阁亭榭错落有致',
+      '园中有拂尘书屋、掬月亭、听雨篷、凝远楼连缀相望',
+      '吴铨所筑遂初园，藏书万卷，是木渎镇最负盛名的私家园林',
+    ],
+    knowledge: '遂初园主人吴铨是清代藏书家，园中拂尘书屋藏书万卷。小顺隔着墙头往里张望，心想：这园子怕是比我整个村子还大。',
+    image: 'images/spot-09.jpg',
+  },
+  {
+    answer: '山塘花市',
+    category: '园林胜景',
+    clues: [
+      '小顺走到一座桥畔，只见花木店鳞次栉比，芳香四溢',
+      '四时盆景姹紫嫣红，各色花草琳琅满目',
+      '山塘桥西畔花市为江南最大，"苏州好，小树种山塘"名不虚传',
+    ],
+    knowledge: '山塘花市是明清时期江南最大的花卉市场。小顺花了两文钱买了一小把茉莉花，别在衣襟上，一路清香——运河上跑了这么多年，头回知道花也能卖钱。',
+    image: 'images/spot-10.jpg',
+  },
+  {
+    answer: '虎丘云岩寺',
+    category: '园林胜景',
+    clues: [
+      '小顺望见山顶古塔巍然耸立，山下千人石上人来人往',
+      '云岩寺塔高耸入云，山腰剑池旁有千年石刻',
+      '虎丘"吴中第一胜景"，云岩寺塔巍然耸立，剑池为最胜处',
+    ],
+    knowledge: '虎丘云岩寺始建于东晋，云岩寺塔建于五代。苏东坡曾说"到苏州不游虎丘乃憾事也"。小顺在庙会上吃了碗自制名酒，又去浴堂泡了个热水澡，好不痛快。',
+    image: 'images/spot-11.jpg',
+  },
+  {
+    answer: '山塘义学',
+    category: '科举教育',
+    clues: [
+      '小顺路过街边三间小屋，里面传来孩童的读书声',
+      '一位塾师正在辅导几个孩童的功课，有个学童在罚站',
+      '山塘桥西堍义学，三间书屋，塾师辅导九个孩童功课',
+    ],
+    knowledge: '义学是清代免费教育机构，由地方乡绅出资创办，专门收容贫寒子弟入学。小顺在门口张望良久，心想：若小时候也能念书识字，也许就不用在船上扛货了。',
+    image: 'images/spot-12.jpg',
+  },
+];
+
+// ─── 游戏状态 ────────────────────────────────────────
+let roundData = [];
+let roundIndex = 0;
+let gameScore = 0;
+let currentClueLevel = 0;
+let typeTimer = null;
+const TOTAL_ROUNDS = 10;
+const MAX_CLUES = 3;
+
+function startGame() {
+  roundData = shuffle(SCENE_DATA).slice(0, TOTAL_ROUNDS);
+  roundIndex = 0;
+  gameScore = 0;
+  window.SuzhouGame.name = '识姑苏';
+  window.SuzhouGame.type = 'spot';
+  window.SuzhouGame.start();
+  showScreen('screen-play');
+  showRound();
+}
+
+function showRound() {
+  if (roundIndex >= roundData.length) { endGame(); return; }
+
+  currentClueLevel = 0;
+  const data = roundData[roundIndex];
+
+  document.getElementById('roundInfo').textContent = `第 ${roundIndex + 1} / ${TOTAL_ROUNDS} 题 · ${data.category}`;
+  document.getElementById('scoreDisplay').textContent = gameScore + ' 分';
+  document.getElementById('sceneLabel').textContent = '这是哪里？';
+
+  // 重置布局模式
+  document.querySelector('.play-body').classList.remove('wide-mode');
+
+  // 加载图片，判断宽高比决定显示模式
+  const img = document.getElementById('sceneImage');
+  const wrap = document.getElementById('imgWrap');
+  wrap.className = 'img-wrap'; // 重置
+  img.style.animationName = '';
+  img.src = data.image;
+  img.onload = function() {
+    const ratio = img.naturalWidth / img.naturalHeight;
+    if (ratio > 3.0) {
+      // 宽图：从右到左缓慢滚动
+      wrap.className = 'img-wrap scroll-pan';
+      wrap.style.setProperty('--pan-dur', Math.max(50, ratio * 15) + 's');
+      // 等 DOM 渲染后计算平移终点
+      requestAnimationFrame(() => {
+        const excess = img.scrollWidth - wrap.clientWidth;
+        wrap.style.setProperty('--pan-end', (-excess) + 'px');
+        // 宽图模式：改为上下布局，图片占更大空间
+        document.querySelector('.play-body').classList.add('wide-mode');
+      });
+    } else {
+      wrap.className = 'img-wrap fit';
+    }
+    img.onload = null;
+  };
+  document.getElementById('revealOverlay').classList.remove('show');
+
+  // 恢复选项和线索区、清空反馈
+  document.getElementById('choicesContainer').style.display = '';
+  document.querySelector('.clue-box').style.display = '';
+  document.getElementById('feedbackArea').innerHTML = '';
+
+  // 选项
+  const wrongOptions = shuffle(SCENE_DATA.filter(s => s.answer !== data.answer)).slice(0, 3).map(s => s.answer);
+  const options = shuffle([data.answer, ...wrongOptions]);
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = options.map(opt =>
+    `<button class="choice-btn" onclick="selectChoice(this, '${opt}')">${opt}</button>`
+  ).join('');
+
+  showClue(data);
+}
+
+function showClue(data) {
+  if (!data) data = roundData[roundIndex];
+  const text = data.clues[currentClueLevel];
+  document.getElementById('clueLevel').textContent = `线索 ${currentClueLevel + 1}/${MAX_CLUES}`;
+
+  const el = document.getElementById('clueText');
+  el.innerHTML = '<span class="cursor"></span>';
+  clearInterval(typeTimer);
+
+  let charIndex = 0;
+  typeTimer = setInterval(() => {
+    if (charIndex < text.length) {
+      el.innerHTML = text.slice(0, charIndex + 1) + '<span class="cursor"></span>';
+      charIndex++;
+    } else {
+      clearInterval(typeTimer);
+      el.textContent = text;
+    }
+  }, 40);
+
+  const hintBtn = document.getElementById('hintBtn');
+  if (currentClueLevel >= MAX_CLUES - 1) {
+    hintBtn.disabled = true;
+    hintBtn.textContent = '已无更多线索';
+  } else {
+    hintBtn.disabled = false;
+    hintBtn.textContent = '再给条线索';
+  }
+}
+
+function useHint() {
+  currentClueLevel++;
+  showClue();
+}
+
+function selectChoice(btn, selected) {
+  const data = roundData[roundIndex];
+  const isCorrect = selected === data.answer;
+
+  // 隐藏选项和线索区，显示反馈区
+  document.getElementById('choicesContainer').style.display = 'none';
+  document.querySelector('.clue-box').style.display = 'none';
+
+  if (isCorrect) {
+    const points = currentClueLevel === 0 ? 10 : currentClueLevel === 1 ? 6 : 3;
+    gameScore += points;
+    document.getElementById('sceneLabel').textContent = data.answer;
+    const overlay = document.getElementById('revealOverlay');
+    overlay.textContent = data.answer;
+    overlay.classList.add('show');
+    setTimeout(() => overlay.classList.remove('show'), 1500);
+  } else {
+    document.getElementById('sceneLabel').textContent = data.answer;
+  }
+
+  // 反馈区替换选项位置
+  document.getElementById('feedbackArea').innerHTML = `
+    <div class="feedback">
+      <div style="font-size:.85rem;color:${isCorrect ? '#81c784' : '#ef9a9a'};font-weight:600;margin-bottom:4px">
+        ${isCorrect ? '小顺恍然大悟！' : '小顺摇了摇头……正确答案是"' + data.answer + '"'}
+      </div>
+      <div class="knowledge-card">
+        <span class="kc-tag">${data.category}</span>
+        <div class="kc-text">${data.knowledge}</div>
+      </div>
+      <button class="next-btn" onclick="nextRound()">
+        ${roundIndex < TOTAL_ROUNDS - 1 ? '下一处 &#8594;' : '看看成绩'}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('scoreDisplay').textContent = gameScore + ' 分';
+}
+
+function nextRound() {
+  roundIndex++;
+  if (roundIndex >= TOTAL_ROUNDS) endGame();
+  else showRound();
+}
+
+function endGame() {
+  window.SuzhouGame.getScore = () => ({
+    total: TOTAL_ROUNDS, correct: gameScore > 0 ? Math.ceil(gameScore / 8) : 0, score: gameScore,
+  });
+
+  let icon, title, desc;
+  if (gameScore >= 80)      { icon = '🏆'; title = '姑苏百事通！'; desc = '小顺对您佩服得五体投地，逢人便说"我家小主是姑苏城里头一号百事通"！'; }
+  else if (gameScore >= 50) { icon = '📖'; title = '姑苏熟客'; desc = '小顺已经很信任您了，跑腿时遇到不认得的场景总爱来问问。'; }
+  else if (gameScore >= 30) { icon = '🔍'; title = '初识姑苏'; desc = '小顺觉得您对姑苏略知一二，还得多逛逛才行。'; }
+  else                      { icon = '📜'; title = '初来乍到'; desc = '小顺心想：小主怕是跟我一样，也是头回来苏州吧……'; }
+
+  document.getElementById('resultIcon').textContent = icon;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultScore').innerHTML = `${gameScore}<small>分</small>`;
+  document.getElementById('resultDesc').textContent = desc;
+  document.getElementById('resultStats').innerHTML = `
+    <div class="stat-item"><span class="stat-value">${TOTAL_ROUNDS}</span><span class="stat-label">带小顺逛了</span></div>
+    <div class="stat-item"><span class="stat-value">${gameScore}</span><span class="stat-label">得分</span></div>
+  `;
+
+  showScreen('screen-result');
+}
+
+window.SuzhouGame.reset = () => startGame();
+</script>
+</body>
+</html>

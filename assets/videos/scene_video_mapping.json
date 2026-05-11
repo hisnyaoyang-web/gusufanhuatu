@@ -1,0 +1,261 @@
+{
+  "description": "姑苏繁华图 · 动态可视化视频映射表。将14个文化场景 × 3个角色视角的文字故事与对应的动态可视化视频文件一一对应。",
+  "characters": {
+    "scholar": {
+      "name": "沈鹤年",
+      "title": "苏州府秀才",
+      "color": "#4A7C8F"
+    },
+    "merchant": {
+      "name": "陈瑞丰",
+      "title": "闽商后裔 / 丝绸洋货商",
+      "color": "#C17817"
+    },
+    "commoner": {
+      "name": "阿桂",
+      "title": "山塘街面馆伙计",
+      "color": "#8B6F4E"
+    }
+  },
+  "categories": [
+    {
+      "id": "keju",
+      "name": "科举教育",
+      "scenes": [
+        {
+          "id": "lingyan_shushu",
+          "name": "灵岩山书塾",
+          "scrollScene": "P1",
+          "story": {
+            "scholar": "鹤年沿山道拾级而上，见书塾中馆师正考查学童功课。一童子捧卷而读，另一童子偷眼看窗外的飞鸟。鹤年忆起幼年求学时光，驻足良久，与馆师攀谈经义，赞其教法严谨。",
+            "merchant": "瑞丰的货船经灵岩山西麓驶入运河，远远望见山腰书塾的飞檐。船夫道："那书塾里的先生，平日也替人写书信呢。"瑞丰想起该给泉州老家去一封家书，暗忖回头托人代笔。",
+            "commoner": "阿桂随父亲上山进香，路过书塾时放慢脚步。塾中传来朗朗读书声，两个学童正摇头晃脑背诵课文。阿桂不识字，只觉得那声调抑扬顿挫，好听得很。"
+          },
+          "video": {
+            "scholar": "keju_01_lingyan_shushu_scholar.mp4",
+            "merchant": "keju_01_lingyan_shushu_merchant.mp4",
+            "commoner": "keju_01_lingyan_shushu_commoner.mp4"
+          }
+        },
+        {
+          "id": "lingyan_shulou",
+          "name": "灵岩山书楼",
+          "scrollScene": "P1",
+          "story": {
+            "scholar": "山顶书楼掩映于修竹茂林间，鹤年推门而入，见满壁经史子集。一位白发长者正临窗挥毫，旁边文人在冥思苦句。鹤年恭恭敬敬行了礼，长者颔首示意他随意取阅架上藏书。",
+            "merchant": "瑞丰在山脚下仰望书楼，心想那楼中的藏书怕是比他铺中的账本还多。他虽经商，却也敬重读书人——毕竟科举出身的官老爷们，才是丝绸贡缎最大的主顾。",
+            "commoner": "阿桂听说山顶有座藏书楼，好奇想去看看，却被父亲拉住说那是读书人去的地方。他只好在山下等着，看松啸亭旁的轿夫歇担喝水，听他们闲聊城中新鲜事。"
+          },
+          "video": {
+            "scholar": "keju_02_lingyan_shulou_scholar.mp4",
+            "merchant": "keju_02_lingyan_shulou_merchant.mp4",
+            "commoner": "keju_02_lingyan_shulou_commoner.mp4"
+          }
+        },
+        {
+          "id": "shantang_yixue",
+          "name": "山塘义学",
+          "scrollScene": "P6",
+          "story": {
+            "scholar": "鹤年路过山塘义学，见塾师正辅导九个孩童功课。一个学童罚跪墙角，面壁思过；另一个站在塾师身旁认真聆听讲解。鹤年心想：义学虽简陋，却是寒门子弟唯一的读书机会，遂解囊捐赠银两。",
+            "merchant": "瑞丰的山塘分号就在义学隔壁。每日听见学童们的读书声从墙那边传来，他偶尔回忆起幼年在泉州私塾念过几年书，后来随父经商便荒废了，不觉有些怅然。",
+            "commoner": "阿桂的邻居家的孩子就在义学读书，每日天不亮便提着书袋去上课。阿桂送货路过时总要在门口张望一眼，心想若自己小时候也能念书识字，也许就不必在面馆里端盘子了。"
+          },
+          "video": {
+            "scholar": "keju_03_shantang_yixue_scholar.mp4",
+            "merchant": "keju_03_shantang_yixue_merchant.mp4",
+            "commoner": "keju_03_shantang_yixue_commoner.mp4"
+          }
+        },
+        {
+          "id": "fuya_fushi",
+          "name": "府衙府试",
+          "scrollScene": "P4",
+          "story": {
+            "scholar": "鹤年终于来到苏州府衙考场。衙内披红挂彩，"天开文运"横匾高悬。两庑考场中密密麻麻坐满了考生，笔墨纸砚铺陈齐整。鹤年深吸一口气，执笔蘸墨，将毕生所学倾注于答卷之上。",
+            "merchant": "瑞丰在胥门外客栈下榻，恰逢府试之日。街上考生络绎不绝，客栈家家爆满。他乐得将铺中上好笔墨卖给赶考书生，又预备好酒菜供考完的书生们庆功——生意从不等人。",
+            "commoner": "阿桂趁送面的机会挤到府衙门口看热闹。衙前牌楼上刻着"吴中天府"四个大字，围观百姓议论纷纷。有人说今年考生多达数百人，怕是竞争激烈得很。"
+          },
+          "video": {
+            "scholar": "keju_04_fuya_fushi_scholar.mp4",
+            "merchant": "keju_04_fuya_fushi_merchant.mp4",
+            "commoner": "keju_04_fuya_fushi_commoner.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "xiqu",
+      "name": "戏曲丝竹",
+      "scenes": [
+        {
+          "id": "mudu_sanxian",
+          "name": "木渎三弦弹唱",
+          "scrollScene": "P2",
+          "story": {
+            "scholar": "鹤年应邀赴木渎友人宴席。斜桥畔厅堂内，二人对坐弹奏三弦琵琶，丝竹声声入耳，正是苏州评弹的雅韵。鹤年听的是《白蛇传》选段，击节赞叹，不觉已过三更。",
+            "merchant": "瑞丰在木渎镇谈完一桩布匹生意，被客商拉去听评弹。他虽听不大懂吴侬软语的唱词，却也被那三弦琵琶的旋律打动，连连叫好，顺手赏了说书先生一锭银子。",
+            "commoner": "阿桂随送货的船到了木渎，正赶上斜桥畔有人弹唱。他挤在人群后面，虽看不见弹奏者的脸，却听得入迷——那曲调时而欢快时而哀婉，比街边小曲好听百倍。"
+          },
+          "video": {
+            "scholar": "xiqu_05_mudu_sanxian_scholar.mp4",
+            "merchant": "xiqu_05_mudu_sanxian_merchant.mp4",
+            "commoner": "xiqu_05_mudu_sanxian_commoner.mp4"
+          }
+        },
+        {
+          "id": "suichuyuan_tanghui",
+          "name": "遂初园堂会",
+          "scrollScene": "P2",
+          "story": {
+            "scholar": "木渎遂初园中正在举办堂会，轩厅座席环列。戏台上正演昆曲《白兔记》，鹤年坐在前排，品着碧螺春，听那"月色辉煌"的唱段。吴铨所筑此园，楼阁亭榭连缀，实为文人之佳境。",
+            "merchant": "瑞丰托人弄到一张遂初园堂会的请帖。园中宾客非富即贵，他趁机和几位绸缎同业交换了行情消息。台上演着什么戏他没太在意——生意场上的情报比戏文精彩得多。",
+            "commoner": "阿桂在遂初园后门外等着收碗碟。门缝里偷看到里面灯火辉煌、戏台高搭，偶尔飘出几句唱词和叫好声。他心想：等攒够了钱，也要买张票进去坐一回。"
+          },
+          "video": {
+            "scholar": "xiqu_06_suichuyuan_tanghui_scholar.mp4",
+            "merchant": "xiqu_06_suichuyuan_tanghui_merchant.mp4",
+            "commoner": "xiqu_06_suichuyuan_tanghui_commoner.mp4"
+          }
+        },
+        {
+          "id": "chuntai_shexi",
+          "name": "春台社戏",
+          "scrollScene": "P9",
+          "story": {
+            "scholar": "鹤年途经狮山脚下，见扎彩戏台正演《打花鼓》，台下观众数百人。春台社戏虽不及堂会雅致，却别有一番民间趣味。他在人群后驻足观看，见那花鼓女子的身段竟也有几分章法。",
+            "merchant": "瑞丰的伙计跑来报告：狮山脚下有社戏，观众数百人，正是摆摊卖茶食的好时机。瑞丰当即让人挑了两担糕点赶去，果然不到半个时辰便售罄，赚了好几两银子。",
+            "commoner": "阿桂最爱看社戏！他一早就占了前排的好位置，看那戏台上《打花鼓》演得热热闹闹。旁边卖糖葫芦的、卖瓜子的、捏面人的吆喝声此起彼伏，好一幅市井百态。"
+          },
+          "video": {
+            "scholar": "xiqu_07_chuntai_shexi_scholar.mp4",
+            "merchant": "xiqu_07_chuntai_shexi_merchant.mp4",
+            "commoner": "xiqu_07_chuntai_shexi_commoner.mp4"
+          }
+        },
+        {
+          "id": "changmen_ropewalk",
+          "name": "阊门走绳索",
+          "scrollScene": "P5",
+          "story": {
+            "scholar": "鹤年在阊门书坊购书后，见城脚下围满人群。一女子手持长竹竿在绳索上行走如履平地，身姿矫健。南码头上楼上商铺伙计纷纷推窗观看。鹤年感叹：民间绝技，不输庙堂之艺。",
+            "merchant": "瑞丰的铺子就在走绳索表演的对面楼上。他在二楼窗口一边算账一边看热闹。那女子的胆量和平衡感让他佩服——做生意何尝不是如此，在绳索上求得平衡方不跌落。",
+            "commoner": "阿桂挤在南码头人群中看走绳索，脖子伸得老长。那女子在高空绳上翻转腾挪，每次险些跌落都引来一片惊呼。阿桂看得手心冒汗，散场后还意犹未尽地跟同伴比划了几个动作。"
+          },
+          "video": {
+            "scholar": "xiqu_08_changmen_ropewalk_scholar.mp4",
+            "merchant": "xiqu_08_changmen_ropewalk_merchant.mp4",
+            "commoner": "xiqu_08_changmen_ropewalk_commoner.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hunli",
+      "name": "婚礼习俗",
+      "scenes": [
+        {
+          "id": "mudu_yingqin",
+          "name": "木渎迎亲船队",
+          "scrollScene": "P2",
+          "story": {
+            "scholar": "鹤年在木渎镇歇脚时，恰逢迎亲船队缓缓驶过中市河面。船队前列擎着"翰林院""状元及第"字样纱灯，乐手在前船吹打。鹤年认出这是城中书香门第嫁女的排场，不禁羡慕。",
+            "merchant": "瑞丰认出迎亲船队中的扎彩大船是他老主顾家的。那户人家专做婚嫁用船租赁，一条扎彩大船租金高达二十两银子。瑞丰暗自盘算：婚嫁产业链远比他想象的利润丰厚。",
+            "commoner": "阿桂和一群孩童追着迎亲船队在河岸上跑。船上乐手吹吹打打，花轿在船头摇晃。有人往河里撒喜钱，阿桂眼疾手快捞到两枚铜板，乐得合不拢嘴。"
+          },
+          "video": {
+            "scholar": "hunli_09_mudu_yingqin_scholar.mp4",
+            "merchant": "hunli_09_mudu_yingqin_merchant.mp4",
+            "commoner": "hunli_09_mudu_yingqin_commoner.mp4"
+          }
+        },
+        {
+          "id": "huanglifang_hunli",
+          "name": "黄鹂坊桥婚礼",
+          "scrollScene": "P6",
+          "story": {
+            "scholar": "鹤年路过黄鹂坊桥弄，见一大户人家正在办婚礼。大红灯笼高挂院中，花轿停在堂前，新郎正在跪拜父母。鹤年想起古人"昏礼者，将合二姓之好"的古训，不觉驻足观看。",
+            "merchant": "瑞丰的绸缎铺刚给这户人家送了嫁衣料子。他路过时特意看了一眼，果然新娘的嫁妆里有好几匹"瑞丰号"的贡缎——这便是最好的活招牌了，比任何市招都管用。",
+            "commoner": "阿桂听说黄鹂坊桥有人家办喜事，早早去凑热闹。院子里摆满了酒席，他跟一群孩子在门口讨喜糖。有人撒花生红枣，阿桂捡了满满一兜，开心得跟过年似的。"
+          },
+          "video": {
+            "scholar": "hunli_10_huanglifang_hunli_scholar.mp4",
+            "merchant": "hunli_10_huanglifang_hunli_merchant.mp4",
+            "commoner": "hunli_10_huanglifang_hunli_commoner.mp4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "yuanlin",
+      "name": "园林胜景",
+      "scenes": [
+        {
+          "id": "suichuyuan",
+          "name": "木渎遂初园",
+          "scrollScene": "P2",
+          "story": {
+            "scholar": "鹤年在木渎镇最大的收获便是游览遂初园。吴铨所筑此园，拂尘书屋、掬月亭、听雨篷、凝远楼连缀相望，藏书万卷。鹤年在书屋中流连忘返，与园主谈诗论文，大有相见恨晚之感。",
+            "merchant": "瑞丰对园林虽无研究，却也看出遂初园造价不菲。光是那些太湖石假山和名贵花木，便抵得上他半年的营收。果然，苏州的富商巨贾，排场不是寻常人能想象的。",
+            "commoner": "阿桂听人说遂初园里花木繁盛、亭台精美，可惜围墙高筑，寻常人不得入内。他只好隔着墙头往里张望，看见假山上有人在赏景，心中向往不已。"
+          },
+          "video": {
+            "scholar": "yuanlin_11_suichuyuan_scholar.mp4",
+            "merchant": "yuanlin_11_suichuyuan_merchant.mp4",
+            "commoner": "yuanlin_11_suichuyuan_commoner.mp4"
+          }
+        },
+        {
+          "id": "yilaoyuan",
+          "name": "怡老园",
+          "scrollScene": "P9",
+          "story": {
+            "scholar": "鹤年知晓怡老园为王鏊之子所筑，意在娱父养老。园中临流筑室、枕夏驾湖，颇有隐逸之风。鹤年感慨：功名利禄终是过眼云烟，不如归隐园林、寄情山水来得自在。",
+            "merchant": "瑞丰久闻怡老园之名，却无缘入内。听人说园主王氏乃苏州望族，世代簪缨。瑞丰暗想：若能把王家发展成客户，那丝绸生意便可再上一个台阶。",
+            "commoner": "阿桂只在远远的地方望见过怡老园的飞檐翘角。听邻居老人说，那是大官人家的园子，里面养着锦鲤、种着奇花。阿桂想：等我攒够了钱，也要在自家院子里挖个小池塘。"
+          },
+          "video": {
+            "scholar": "yuanlin_12_yilaoyuan_scholar.mp4",
+            "merchant": "yuanlin_12_yilaoyuan_merchant.mp4",
+            "commoner": "yuanlin_12_yilaoyuan_commoner.mp4"
+          }
+        },
+        {
+          "id": "shantang_huashi",
+          "name": "山塘花市",
+          "scrollScene": "P6",
+          "story": {
+            "scholar": "鹤年在山塘桥西畔流连花市。四时盆景姹紫嫣红，兰花、梅花、菊花的盆景各具风骨。鹤年选了一盆悬崖式松桩盆景，欲携回书斋清供。古人云"苏州好，小树种山塘"，果然名不虚传。",
+            "merchant": "瑞丰在花市中看到了商机。这些盆景动辄数两至数十两银子，买家多是城中富户。他打听了一下花木的进货渠道——据说虎丘花农精细培植后运来，利润颇为可观。",
+            "commoner": "阿桂最爱逛花市，虽然买不起那些精贵的盆景，但看看也觉得赏心悦目。花农们吆喝着各色花草的名字，香气扑鼻。阿桂花了两文钱买了一小把茉莉花，别在衣襟上，一路清香。"
+          },
+          "video": {
+            "scholar": "yuanlin_13_shantang_huashi_scholar.mp4",
+            "merchant": "yuanlin_13_shantang_huashi_merchant.mp4",
+            "commoner": "yuanlin_13_shantang_huashi_commoner.mp4"
+          }
+        },
+        {
+          "id": "huqiu_yunyansi",
+          "name": "虎丘云岩寺",
+          "scrollScene": "P7",
+          "story": {
+            "scholar": "鹤年终于来到虎丘——"吴中第一胜景"。山顶云岩寺塔巍然耸立，山腰剑池旁颜真卿手书"虎丘剑池"四字千年不朽。鹤年在千人石上凭吊前贤，想起复社虎丘大会之盛况，不禁心潮澎湃。",
+            "merchant": "瑞丰来虎丘并非游览，而是考察商机。山前商铺密集，凉席店、花木店、茶棚遍布。他看中了一间位置极佳的店面，打算开个分号卖虎丘名席和花木盆景。",
+            "commoner": "阿桂终于等到虎丘庙会之日。山下游人如织，到处是茶棚和吃食摊。他在"三益号"买了碗自制名酒尝鲜，又去香水浴堂泡了个热水澡，洗去了一身的疲惫。"
+          },
+          "video": {
+            "scholar": "yuanlin_14_huqiu_yunyansi_scholar.mp4",
+            "merchant": "yuanlin_14_huqiu_yunyansi_merchant.mp4",
+            "commoner": "yuanlin_14_huqiu_yunyansi_commoner.mp4"
+          }
+        }
+      ]
+    }
+  ],
+  "videoNamingConvention": "{类别编号}_{序号}_{场景英文名}_{角色}.mp4",
+  "videoResolution": "建议 1920x1080 或 1280x720",
+  "totalVideos": 42,
+  "totalScenes": 14,
+  "totalCharacters": 3
+}

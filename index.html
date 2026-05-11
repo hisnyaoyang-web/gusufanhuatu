@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>姑苏繁华图 — 数字人文活化展</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;600&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ═══ 加载遮罩 ═══ -->
+  <div id="loading-screen">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- ═══ 开场 ═══ -->
+  <div id="intro" role="button" tabindex="0" aria-label="点击进入展览">
+    <canvas id="intro-canvas"></canvas>
+    <div class="intro-content">
+      <div class="intro-title">姑 苏 繁 华 图</div>
+      <div class="intro-divider"></div>
+      <div class="intro-subtitle">清 · 徐扬 &nbsp; 乾隆二十四年（1759）</div>
+      <div class="intro-seal">徐揚</div>
+      <div class="intro-hint">— 点击任意处进入画卷 —</div>
+    </div>
+  </div>
+
+  <!-- ═══ 身份选择 ═══ -->
+  <div id="identity-selection">
+    <div class="identity-overlay-bg"></div>
+    <div class="identity-content">
+      <div class="identity-greeting">今朝是乾隆二十四年，暮春之初，恭迎小主来到姑苏城……</div>
+      <div class="identity-prompt">（请选择您的身份）</div>
+      <div class="identity-cards" id="identityCards"></div>
+    </div>
+  </div>
+
+  <!-- ═══ 场景标签 ═══ -->
+  <div class="scene-label" id="sceneLabel">
+    <span id="sceneLabelText"></span>
+    <span class="tag" id="sceneLabelTag"></span>
+  </div>
+
+  <!-- ═══ 叙事卡片（左侧古籍竖排） ═══ -->
+  <div id="narrative-card">
+    <div class="narrative-scene-name">
+      <span class="scene-bracket">【</span>
+      <span id="narrativeSceneName"></span>
+      <span class="scene-bracket">】</span>
+    </div>
+    <div class="narrative-divider"></div>
+    <div class="narrative-text" id="narrativeText"></div>
+  </div>
+
+  <!-- ═══ 主滚动区域 ═══ -->
+  <div id="scroll-wrapper">
+    <section id="painting-section">
+      <div class="painting-container" id="paintingContainer">
+        <div id="zoom-wrapper">
+          <!-- 10 tiles，原始顺序 -->
+          <img src="assets/images/tiles/10OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/09OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/08OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/07OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/06OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/05OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/04OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/03OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/02OK.jpg" alt="" draggable="false">
+          <img src="assets/images/tiles/01OK.jpg" alt="" draggable="false">
+          <!-- 热点容器（随画面滚动） -->
+          <div id="hotspotsContainer"></div>
+        </div>
+      </div>
+      <!-- 放大镜镜片 -->
+      <canvas id="magnifierLens"></canvas>
+
+      <!-- 我在哪 - 提示框 -->
+      <div id="findme-hint">
+        <div class="findme-hint-progress" id="findmeProgress"></div>
+        <div class="findme-hint-task">在画卷中找到此人，点击确认位置</div>
+        <img class="findme-hint-img" id="findmeImg" src="" alt="">
+        <div class="findme-hint-name" id="findmeName"></div>
+        <div class="findme-hint-text" id="findmeText"></div>
+        <div class="findme-hint-actions" id="findmeActions">
+          <button class="findme-close-btn" id="findmeCloseBtn">关闭</button>
+        </div>
+      </div>
+
+      <!-- 点击反馈圈 -->
+      <div id="findmeFeedback"></div>
+    </section>
+  </div>
+
+  <!-- ═══ 底部导航栏 ═══ -->
+  <nav id="bottom-nav">
+    <!-- 进度条 -->
+    <div class="progress-track" id="progressTrack">
+      <div class="progress-fill" id="progressFill"></div>
+      <div class="scene-markers" id="sceneMarkers"></div>
+    </div>
+
+    <!-- 视角角色标签 -->
+    <div class="role-label" id="roleLabel">
+      <span class="role-icon" id="roleIcon"></span>
+      <span class="role-name" id="roleName"></span>
+      <span class="role-title" id="roleTitle"></span>
+    </div>
+
+    <!-- 放大镜 -->
+    <button class="magnifier-btn" id="magnifierBtn" title="近观">近观</button>
+
+    <!-- 我在哪 -->
+    <button class="findme-btn" id="findmeBtn" title="寻迹">寻迹</button>
+
+  </nav>
+
+  <!-- ═══ 角色信息面板 ═══ -->
+  <div id="rolePanel">
+    <div class="rp-backdrop" id="rolePanelBackdrop"></div>
+    <div class="rp-card">
+      <button class="rp-close" id="rolePanelClose">&times;</button>
+      <div class="rp-header">
+        <img class="rp-image" src="" alt="">
+        <div class="rp-info">
+          <div class="rp-name"></div>
+          <div class="rp-title"></div>
+          <div class="rp-age"></div>
+        </div>
+      </div>
+      <div class="rp-bio"></div>
+    </div>
+  </div>
+
+  <!-- ═══ 详情弹窗 ═══ -->
+  <div id="detail-modal">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <span class="modal-tag" id="modalTag"></span>
+
+      <div class="modal-narrative" id="modalNarrative">
+        <div id="modalNarrativeText"></div>
+      </div>
+
+      <!-- 相关行业 -->
+      <div class="modal-section" id="modalCommerce"></div>
+
+      <!-- 文化场景 -->
+      <div class="modal-section" id="modalCultural"></div>
+
+      <div class="modal-stats" id="modalStats"></div>
+
+      <button class="modal-jump" id="modalJump">跳转到此场景</button>
+    </div>
+  </div>
+
+  <!-- ═══ 放大叠加层（相框） ═══ -->
+  <div id="zoom-overlay">
+    <div class="zoom-overlay-backdrop" id="zoomOverlayBackdrop"></div>
+    <div class="zoom-overlay-frame">
+      <button class="zoom-overlay-close" id="zoomOverlayClose">&times;</button>
+      <div class="zoom-overlay-content" id="zoomOverlayContent"></div>
+      <div class="zoom-overlay-scene-name" id="zoomOverlaySceneName"></div>
+      <div class="zoom-overlay-story" id="zoomOverlayStory"></div>
+    </div>
+  </div>
+
+  <!-- ═══ NPC 对话层（陆小顺） ═══ -->
+  <div id="npc-dialog">
+    <div class="npc-dialog-backdrop"></div>
+    <div class="npc-dialog-card">
+      <div class="npc-avatar-col">
+        <img class="npc-avatar" src="characters/npc/xiaoshun.jpg" alt="陆小顺">
+        <div class="npc-avatar-name">陆小顺</div>
+      </div>
+      <div class="npc-body-col">
+        <div class="npc-text" id="npcText"></div>
+        <div class="npc-dialog-actions" id="npcActions"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 游戏叠加层 ═══ -->
+  <div id="game-overlay">
+    <div class="game-overlay-bar">
+      <button class="game-overlay-close" id="gameOverlayClose">&times;</button>
+      <span class="game-overlay-title">看图识俗</span>
+    </div>
+    <iframe id="gameFrame" src="" allowfullscreen></iframe>
+  </div>
+
+  <!-- ═══ Scripts ═══ -->
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- D3 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <!-- Data & Logic -->
+  <script src="data.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

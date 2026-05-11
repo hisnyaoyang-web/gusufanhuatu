@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>民俗知识问答 · 姑苏繁华图</title>
+<link rel="stylesheet" href="common.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── 倒计时环 ─────────────────────────────────────── */
+.timer-ring {
+  position: relative;
+  width: 56px; height: 56px;
+  flex-shrink: 0;
+}
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-ring circle {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.timer-ring .bg   { stroke: rgba(0,0,0,.08); }
+.timer-ring .fg   { stroke: var(--cinnabar); transition: stroke-dashoffset .95s linear; }
+.timer-ring .time {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cinnabar);
+  font-family: var(--font-serif);
+}
+.timer-ring.danger .fg   { stroke: #e53935; }
+.timer-ring.danger .time { color: #e53935; }
+
+/* ─── 题目区域 ──────────────────────────────────────── */
+.question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.q-number {
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+.q-category {
+  font-size: .75rem;
+  color: var(--gold);
+  background: rgba(212,175,55,.1);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.question-text {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--ink);
+  line-height: 1.8;
+  margin-bottom: 20px;
+  min-height: 60px;
+}
+
+/* ─── 选项 ──────────────────────────────────────────── */
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 18px;
+  font-family: var(--font-sans);
+  font-size: .95rem;
+  text-align: left;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text);
+}
+.option-btn:hover:not(.disabled) {
+  border-color: var(--cinnabar);
+  background: rgba(178,34,34,.04);
+}
+.option-btn .opt-label {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(0,0,0,.05);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--ink);
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.option-btn.correct {
+  border-color: #2e7d32;
+  background: rgba(46,125,50,.06);
+}
+.option-btn.correct .opt-label { background: #2e7d32; color: #fff; }
+.option-btn.wrong {
+  border-color: #c62828;
+  background: rgba(198,40,40,.06);
+}
+.option-btn.wrong .opt-label { background: #c62828; color: #fff; }
+.option-btn.disabled { pointer-events: none; opacity: .7; }
+.option-btn.reveal-correct { border-color: #2e7d32; }
+.option-btn.reveal-correct .opt-label { background: #2e7d32; color: #fff; }
+
+/* ─── 结果页类别统计 ────────────────────────────────── */
+.category-stats {
+  width: 100%;
+  max-width: 480px;
+  margin: 20px auto 0;
+}
+.cat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.cat-name {
+  width: 80px;
+  font-size: .85rem;
+  color: var(--ink);
+  flex-shrink: 0;
+  text-align: right;
+}
+.cat-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: rgba(0,0,0,.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--cinnabar), var(--gold));
+  transition: width .6s ease;
+}
+.cat-score {
+  width: 36px;
+  font-size: .8rem;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+/* ─── 按钮组 ────────────────────────────────────────── */
+.btn-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部栏 -->
+<div class="game-header">
+  <button class="btn-back" onclick="goBack()">&#8592; 返回</button>
+  <h1>民俗知识<span>问答</span></h1>
+  <div style="width:60px"></div>
+</div>
+
+<div class="game-container">
+
+  <!-- 开始画面 -->
+  <div id="screen-start" class="screen active">
+    <div class="screen-icon">🏮</div>
+    <div class="screen-title">民俗知识问答</div>
+    <div class="screen-subtitle">
+      从科举教育、戏曲丝竹、婚礼习俗、园林胜景、商业贸易五个方面，测试你对姑苏民俗的了解。共15题，每题10秒。
+    </div>
+    <button class="btn btn-primary" onclick="startGame()">开始答题</button>
+  </div>
+
+  <!-- 答题画面 -->
+  <div id="screen-play" class="screen">
+    <div class="question-header">
+      <span class="q-number" id="qNumber"></span>
+      <span class="q-category" id="qCategory"></span>
+      <div class="timer-ring" id="timerRing">
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          <circle class="bg" cx="28" cy="28" r="24"/>
+          <circle class="fg" id="timerCircle" cx="28" cy="28" r="24"
+                  stroke-dasharray="150.8" stroke-dashoffset="0"/>
+        </svg>
+        <span class="time" id="timerText">10</span>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsContainer"></div>
+    <div id="feedbackArea"></div>
+  </div>
+
+  <!-- 结果画面 -->
+  <div id="screen-result" class="screen">
+    <div class="screen-icon" id="resultIcon"></div>
+    <div class="screen-title" id="resultTitle"></div>
+    <div class="score-big" id="resultScore"></div>
+    <div class="divider"></div>
+    <div class="stats-row" id="resultStats"></div>
+    <div class="category-stats" id="categoryStats"></div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="startGame()">再来一局</button>
+      <button class="btn btn-secondary" onclick="goBack()">返回</button>
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+// ─── 题库 ────────────────────────────────────────────
+const QUESTIONS = [
+  // ── 科举教育 ──────────────────────────────
+  {
+    category: '科举教育',
+    question: '《姑苏繁华图》中描绘的府试在哪个地点举行？',
+    options: ['灵岩山书塾', '苏州府衙', '山塘义学', '遂初园书屋'],
+    answer: 1,
+    explanation: '府试在苏州府衙举行，衙内披红挂彩，大门高悬"天开文运"横匾，两庑考场中密密麻麻坐满了童生。徐扬跋文"三条烛焰，或抡才于童子之场"正是描述此景。',
+  },
+  {
+    category: '科举教育',
+    question: '山塘义学中塾师辅导了多少个孩童的功课？',
+    options: ['三个', '五个', '九个', '十二个'],
+    answer: 2,
+    explanation: '山塘桥西堍设有义学，三间书屋中塾师辅导九个孩童功课。义学虽简陋，却是寒门子弟唯一的读书机会。',
+  },
+  {
+    category: '科举教育',
+    question: '《姑苏繁华图》的作者徐扬在跋文中用哪个词语形容府试场景？',
+    options: ['"金榜题名"', '"童子之场"', '"蟾宫折桂"', '"独占鳌头"'],
+    answer: 1,
+    explanation: '徐扬跋文写道"三条烛焰，或抡才于童子之场"，明确指出这是童生参加的府试，而非学政主持的院试。',
+  },
+  // ── 戏曲丝竹 ──────────────────────────────
+  {
+    category: '戏曲丝竹',
+    question: '木渎斜桥畔的弹唱使用的是什么乐器？',
+    options: ['二胡与箫', '三弦与琵琶', '古琴与瑟', '笛子与锣鼓'],
+    answer: 1,
+    explanation: '斜桥畔厅堂内，二人对坐弹奏三弦琵琶，丝竹声声入耳，正是苏州评弹的雅韵。苏州评弹是吴地最具代表性的曲艺形式。',
+  },
+  {
+    category: '戏曲丝竹',
+    question: '遂初园补闲堂的堂会演出的是哪部昆曲？',
+    options: ['《牡丹亭》', '《长生殿》', '《白兔记》', '《桃花扇》'],
+    answer: 2,
+    explanation: '遂初园补闲堂内昆曲堂会，演出《白兔记》"月色辉煌"一出。昆曲发源于苏州昆山，被誉为"百戏之祖"。',
+  },
+  {
+    category: '戏曲丝竹',
+    question: '狮山脚下春台社戏演出的是哪出戏？',
+    options: ['《红梅记·打花鼓》', '《西厢记》', '《窦娥冤》', '《白蛇传》'],
+    answer: 0,
+    explanation: '狮山脚下扎彩戏台正演《红梅记》中的《打花鼓》一折，台下观众数百人，妇女坐在单独席棚中观看。',
+  },
+  // ── 婚礼习俗 ──────────────────────────────
+  {
+    category: '婚礼习俗',
+    question: '木渎迎亲船队前面小船上挂的纱灯写有什么字样？',
+    options: ['"百年好合"', '"翰林院""状元及第"', '"龙凤呈祥"', '"天作之合"'],
+    answer: 1,
+    explanation: '船队前列擎着"翰林院""状元及第"字样纱灯——这是当时民间嫁娶借官衙排场以壮声势的习俗，并非状元府第迎亲。',
+  },
+  {
+    category: '婚礼习俗',
+    question: '画中描绘的黄鹂坊桥婚礼场景中，新郎正在做什么？',
+    options: ['骑马迎亲', '跪拜父母', '掀盖头', '敬酒待客'],
+    answer: 1,
+    explanation: '黄鹂坊桥弄一大户人家办婚礼，大红灯笼高挂，花轿停在院中，新郎跪拜父母。这是清代苏州民间婚礼的重要环节。',
+  },
+  // ── 园林胜景 ──────────────────────────────
+  {
+    category: '园林胜景',
+    question: '木渎遂初园是何人所筑？',
+    options: ['王鏊之子', '吴铨', '范仲淹', '沈周'],
+    answer: 1,
+    explanation: '遂初园为吴铨所筑，园中拂尘书屋、掬月亭、听雨篷、凝远楼连缀相望，藏书万卷，是木渎镇最重要的园林。',
+  },
+  {
+    category: '园林胜景',
+    question: '画中描绘的江南最大花市位于何处？',
+    options: ['阊门大街', '山塘街', '木渎镇', '虎丘山塘'],
+    answer: 3,
+    explanation: '山塘桥西畔花市为江南最大花市，花木店十余家，四时盆景姹紫嫣红。古语云"苏州好，小树种山塘"。',
+  },
+  {
+    category: '园林胜景',
+    question: '怡老园是谁为其父亲建造的？',
+    options: ['吴铨', '范仲淹', '王鏊之子', '徐扬'],
+    answer: 2,
+    explanation: '怡老园为明代王鏊之子所筑，意在娱父养老，位于布政司署旁。园中临流筑室，枕夏驾湖，颇有隐逸之风。',
+  },
+  // ── 商业贸易 ──────────────────────────────
+  {
+    category: '商业贸易',
+    question: '《姑苏繁华图》中共可辨认多少家市招（商铺招牌）？',
+    options: ['约100家', '约160家', '约260家', '约360家'],
+    answer: 2,
+    explanation: '阊门一带是苏州最繁华的商业中心，图中共有260余家可辨认市招，涵盖36个行业，展现了清代苏州"百货云集"的盛况。',
+  },
+  {
+    category: '商业贸易',
+    question: '画中数量最多的商铺类型是什么？',
+    options: ['丝绸庄', '钱庄典当', '酒店饭馆小吃', '粮食铺'],
+    answer: 2,
+    explanation: '酒店饭馆小吃共31家，是所有行业中数量最多的，包括包办酒席、馄饨、三鲜大面、大肉馒头等，体现了苏州"美食之都"的传统。',
+  },
+  {
+    category: '商业贸易',
+    question: '阊门大街上的钱庄典当主要由哪地商人经营？',
+    options: ['苏州本地商人', '山西商人', '福建商人', '安徽商人'],
+    answer: 1,
+    explanation: '阊门钱庄典当共14家，主要由山西商人开设，在苏州开设多达130余家。山西商人的金融网络遍布全国。',
+  },
+  {
+    category: '商业贸易',
+    question: '虎丘名席、定织细席是苏州著名的什么产品？',
+    options: ['丝绸织物', '竹编凉席', '陶瓷器皿', '纸扇画品'],
+    answer: 1,
+    explanation: '虎丘环山居民以织席为业，出产"虎丘名席""定织细席"等知名凉席产品，共6家店铺专营，是苏州特色手工业之一。',
+  },
+];
+
+// ─── 游戏状态 ────────────────────────────────────────
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let startTime = 0;
+let timerInterval = null;
+let timeLeft = 10;
+const TOTAL = 15;
+const TIME_PER_Q = 10;
+const CIRCUMFERENCE = 2 * Math.PI * 24; // r=24
+
+// 类别统计
+const categoryStats = {};
+
+function startGame() {
+  currentQuestions = shuffle(QUESTIONS).slice(0, TOTAL);
+  currentIndex = 0;
+  score = 0;
+  startTime = Date.now();
+  // 初始化类别统计
+  const cats = [...new Set(QUESTIONS.map(q => q.category))];
+  cats.forEach(c => categoryStats[c] = { total: 0, correct: 0 });
+
+  window.SuzhouGame.name = '民俗知识问答';
+  window.SuzhouGame.type = 'quiz';
+  window.SuzhouGame.start();
+
+  showScreen('screen-play');
+  showQuestion();
+}
+
+function showQuestion() {
+  if (currentIndex >= currentQuestions.length) {
+    endGame();
+    return;
+  }
+
+  const q = currentQuestions[currentIndex];
+  const cat = q.category;
+  if (categoryStats[cat]) categoryStats[cat].total++;
+
+  // 更新 UI
+  document.getElementById('qNumber').textContent = `第 ${currentIndex + 1} / ${TOTAL} 题`;
+  document.getElementById('qCategory').textContent = cat;
+  document.getElementById('questionText').textContent = q.question;
+  document.getElementById('progressFill').style.width = ((currentIndex) / TOTAL * 100) + '%';
+  document.getElementById('feedbackArea').innerHTML = '';
+
+  // 选项
+  const labels = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-label">${labels[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    container.appendChild(btn);
+  });
+
+  // 倒计时
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = TIME_PER_Q;
+  const ring = document.getElementById('timerRing');
+  const circle = document.getElementById('timerCircle');
+  const text = document.getElementById('timerText');
+
+  ring.classList.remove('danger');
+  circle.style.strokeDashoffset = '0';
+  text.textContent = timeLeft;
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    text.textContent = timeLeft;
+    const progress = 1 - timeLeft / TIME_PER_Q;
+    circle.style.strokeDashoffset = (CIRCUMFERENCE * progress).toFixed(1);
+
+    if (timeLeft <= 3) ring.classList.add('danger');
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timeUp();
+    }
+  }, 1000);
+}
+
+function timeUp() {
+  const q = currentQuestions[currentIndex];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.answer) btn.classList.add('reveal-correct');
+  });
+  showToast('时间到！', 'error');
+  showFeedback(q, false);
+}
+
+function selectAnswer(idx) {
+  clearInterval(timerInterval);
+  const q = currentQuestions[currentIndex];
+  const btns = document.querySelectorAll('.option-btn');
+  const isCorrect = idx === q.answer;
+
+  if (isCorrect) {
+    score++;
+    if (categoryStats[q.category]) categoryStats[q.category].correct++;
+    btns[idx].classList.add('correct');
+    showToast('回答正确！', 'success');
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.answer].classList.add('reveal-correct');
+    showToast('回答错误', 'error');
+  }
+
+  btns.forEach((btn, i) => {
+    if (i !== idx && i !== q.answer) btn.classList.add('disabled');
+    else btn.classList.add('disabled');
+  });
+
+  showFeedback(q, isCorrect);
+}
+
+function showFeedback(q, correct) {
+  const area = document.getElementById('feedbackArea');
+  area.innerHTML = `
+    <div class="knowledge-card">
+      <span class="kc-tag">${q.category}</span>
+      <div class="kc-text">${q.explanation}</div>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn btn-primary" onclick="nextQuestion()">
+        ${currentIndex < TOTAL - 1 ? '下一题 &#8594;' : '查看结果'}
+      </button>
+    </div>
+  `;
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= TOTAL) endGame();
+  else showQuestion();
+}
+
+function endGame() {
+  clearInterval(timerInterval);
+  const elapsed = Math.round((Date.now() - startTime) / 1000);
+  const pct = Math.round(score / TOTAL * 100);
+
+  // 更新接口
+  window.SuzhouGame.getScore = () => ({
+    total: TOTAL, correct: score, time: elapsed,
+  });
+
+  // 结果画面
+  let icon, title;
+  if (pct >= 80)      { icon = '🏆'; title = '姑苏通！'; }
+  else if (pct >= 60) { icon = '📖'; title = '小有心得'; }
+  else if (pct >= 40) { icon = '🔍'; title = '初窥门径'; }
+  else                { icon = '📜'; title = '再接再厉'; }
+
+  document.getElementById('resultIcon').textContent = icon;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultScore').innerHTML = `${score} <small>/ ${TOTAL}</small>`;
+
+  document.getElementById('resultStats').innerHTML = `
+    <div class="stat-item"><span class="stat-value">${pct}%</span><span class="stat-label">正确率</span></div>
+    <div class="stat-item"><span class="stat-value">${formatTime(elapsed)}</span><span class="stat-label">用时</span></div>
+  `;
+
+  // 类别统计
+  const catContainer = document.getElementById('categoryStats');
+  catContainer.innerHTML = '<div style="font-size:.9rem;color:var(--ink);margin-bottom:8px;font-weight:600">各类表现</div>';
+  Object.entries(categoryStats).forEach(([name, data]) => {
+    if (data.total === 0) return;
+    const ratio = Math.round(data.correct / data.total * 100);
+    catContainer.innerHTML += `
+      <div class="cat-row">
+        <span class="cat-name">${name}</span>
+        <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${ratio}%"></div></div>
+        <span class="cat-score">${data.correct}/${data.total}</span>
+      </div>`;
+  });
+
+  showScreen('screen-result');
+}
+
+// 重置接口
+window.SuzhouGame.reset = () => startGame();
+</script>
+</body>
+</html>

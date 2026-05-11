@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>场景拼图 · 姑苏繁华图</title>
+<link rel="stylesheet" href="common.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── 场景选择 ──────────────────────────────────────── */
+.scene-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+}
+.scene-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+  min-height: 100px;
+  position: relative;
+  overflow: hidden;
+}
+.scene-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: .15;
+  transition: opacity .3s;
+}
+.scene-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--gold);
+  box-shadow: 0 6px 20px rgba(0,0,0,.12);
+}
+.scene-card:hover::before { opacity: .25; }
+.scene-card-name {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--ink);
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+.scene-card-tag {
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── 拼图区域 ──────────────────────────────────────── */
+.puzzle-wrapper {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.puzzle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  background: var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+  aspect-ratio: 3/2;
+}
+
+.puzzle-piece {
+  position: relative;
+  border-radius: 6px;
+  cursor: grab;
+  transition: transform .15s ease, box-shadow .15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.puzzle-piece:active { cursor: grabbing; }
+.puzzle-piece.selected {
+  transform: scale(.92);
+  box-shadow: 0 0 0 3px var(--cinnabar), 0 4px 12px rgba(178,34,34,.3);
+  z-index: 10;
+}
+.puzzle-piece.correct {
+  box-shadow: 0 0 0 2px #2e7d32;
+}
+.puzzle-piece .piece-label {
+  font-family: var(--font-serif);
+  font-size: .9rem;
+  color: rgba(255,255,255,.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,.5);
+  text-align: center;
+  padding: 4px;
+  pointer-events: none;
+}
+.puzzle-piece .piece-number {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: .65rem;
+  color: rgba(255,255,255,.6);
+  pointer-events: none;
+}
+
+/* ─── 参考图 ────────────────────────────────────────── */
+.reference-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 12px 0;
+  padding: 6px 14px;
+  font-size: .8rem;
+  color: var(--gold);
+  background: rgba(212,175,55,.08);
+  border: 1px solid rgba(212,175,55,.3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.reference-toggle:hover { background: rgba(212,175,55,.15); }
+
+.reference-img {
+  display: none;
+  width: 100%;
+  max-width: 420px;
+  margin: 8px auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.reference-img.show { display: block; }
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--border);
+  padding: 2px;
+}
+.reference-cell {
+  aspect-ratio: 3/2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .6rem;
+  color: rgba(255,255,255,.7);
+  font-family: var(--font-serif);
+}
+
+/* ─── 完成覆盖层 ────────────────────────────────────── */
+.complete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fadeIn .4s ease;
+}
+.complete-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  border: 2px solid var(--gold);
+  animation: scaleIn .4s ease;
+}
+@keyframes scaleIn {
+  from { transform: scale(.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ─── 响应式 ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .scene-grid { grid-template-columns: repeat(2, 1fr); }
+  .puzzle-wrapper { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="game-header">
+  <button class="btn-back" onclick="goBack()">&#8592; 返回</button>
+  <h1>场景<span>拼图</span></h1>
+  <div style="width:60px"></div>
+</div>
+
+<div class="game-container">
+  <!-- 开始画面 - 选场景 -->
+  <div id="screen-start" class="screen active">
+    <div class="screen-icon">🧩</div>
+    <div class="screen-title">选择场景</div>
+    <div class="screen-subtitle">选择一个姑苏繁华图中的场景，将打乱的拼图还原。点击两块拼图即可交换位置。</div>
+    <div class="scene-grid" id="sceneGrid"></div>
+  </div>
+
+  <!-- 拼图画面 -->
+  <div id="screen-play" class="screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:16px;font-size:.85rem;color:var(--text-muted)">
+        <span>⏱ <strong id="timerDisplay" style="color:var(--cinnabar)">00:00</strong></span>
+        <span>🔄 <strong id="movesDisplay" style="color:var(--gold)">0</strong> 步</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="reference-toggle" onclick="toggleReference()">👁 参考图</button>
+        <button class="btn-back" onclick="backToSelect()" style="font-size:.8rem;padding:5px 10px">换场景</button>
+      </div>
+    </div>
+
+    <div class="puzzle-wrapper">
+      <div class="puzzle-grid" id="puzzleGrid"></div>
+    </div>
+
+    <div class="reference-img" id="referenceImg"></div>
+  </div>
+</div>
+
+<!-- 完成弹窗 -->
+<div class="complete-overlay" id="completeOverlay" style="display:none">
+  <div class="complete-card">
+    <div style="font-size:2.5rem;margin-bottom:8px">🎉</div>
+    <div class="card-title" style="font-size:1.3rem;margin-bottom:4px" id="completeTitle"></div>
+    <div class="card-text" id="completeText" style="margin-bottom:16px"></div>
+    <div class="stats-row" id="completeStats"></div>
+    <div class="knowledge-card" id="completeKnowledge" style="text-align:left"></div>
+    <div class="btn-group">
+      <button class="btn btn-gold" onclick="backToSelect()">选其他场景</button>
+      <button class="btn btn-primary" onclick="replayScene()">再来一次</button>
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+// ─── 场景数据 ────────────────────────────────────────
+const SCENES = [
+  {
+    id: 'S01', name: '天平山', tag: '奇石红枫',
+    colors: ['#8B4513','#A0522D','#CD853F','#D2691E','#DEB887','#F4A460','#BC8F8F','#C19A6B','#DAA520'],
+    pieceNames: ['怪石嶙峋','清泉淙淙','范祠古木','山道蜿蜒','红枫层林','山脚村舍','远山云雾','农田阡陌','天平胜景'],
+    knowledge: '天平山以怪石、清泉、红枫"三绝"著称。范仲淹祠墓即在此山，是苏州重要的历史文化名胜。暮春时节，山石嶙峋、清泉淙淙，为文人游赏佳处。',
+  },
+  {
+    id: 'S02', name: '灵岩山', tag: '吴王遗迹',
+    colors: ['#2F4F4F','#3B6363','#4A7C6F','#5A8F7F','#6B9F8F','#506060','#3D5A5A','#7CAAA0','#8FBCB0'],
+    pieceNames: ['馆娃宫址','山间书塾','书楼藏卷','官道轿夫','松啸亭','铁匠铺','农人耕作','运河木簰','灵岩古刹'],
+    knowledge: '灵岩山为吴王夫差馆娃宫遗址。山间有私塾书楼，徐扬跋文称"万卷书香，受业于先生之席"。山脚下官盐铺、铁匠铺等反映了山麓商业活动。',
+  },
+  {
+    id: 'S03', name: '木渎镇', tag: '商业古镇',
+    colors: ['#8B6914','#A67C00','#BF8F00','#D4A017','#E8C040','#F0D060','#C17817','#D49030','#E8A840'],
+    pieceNames: ['遂初园门','拂尘书屋','掬月亭','斜桥弹唱','迎亲船队','布庄粮铺','补闲堂','河中舟楫','木渎市集'],
+    knowledge: '木渎镇是苏州西部商业重镇。遂初园为吴铨所筑，园中拂尘书屋藏书万卷。斜桥畔弹奏三弦琵琶，河中迎亲船队热闹非凡，展现了江南水乡的繁华景象。',
+  },
+  {
+    id: 'S04', name: '石湖', tag: '水上通衢',
+    colors: ['#4682B4','#5B9BD5','#87CEEB','#6CA6CD','#7EC8E3','#A0D2E8','#4A8CB0','#3A7CA5','#B0D4E8'],
+    pieceNames: ['碧波万顷','越城桥','窑货铺','铁匠铺','渔船点点','上方山','楞伽塔','货船穿梭','石湖渡口'],
+    knowledge: '石湖是苏州西部重要的水运枢纽，湖中货船往来穿梭。越城桥堍有"成造田器"的招牌，为农具制造交易之地。上方山楞伽塔倒映水中，湖光山色尽收眼底。',
+  },
+  {
+    id: 'S05', name: '狮子山', tag: '狮山社戏',
+    colors: ['#DAA520','#CD853F','#DEB887','#E8C040','#F0D060','#C19A6B','#B8860B','#D4A017','#8B6914'],
+    pieceNames: ['扎彩戏台','《打花鼓》','观众如潮','妇女席棚','卖糖葫芦','卖瓜子','捏面人','山脚集市','狮山春台'],
+    knowledge: '狮山脚下春台社戏热闹非凡。扎彩戏台正演《红梅记》中的《打花鼓》一折，台下观众数百人，妇女坐在单独席棚中观看。周围小贩叫卖，一派民间百态。',
+  },
+  {
+    id: 'S06', name: '胥门', tag: '城门关隘',
+    colors: ['#8B0000','#A52A2A','#B22222','#CD5C5C','#DC143C','#AA3030','#993333','#CC4444','#666666'],
+    pieceNames: ['府衙考场','天开文运','童生入场','城门巍峨','走绳索','耍猴舞狮','客栈林立','码头货堆','胥门驿道'],
+    knowledge: '胥门是苏州城西重要城门。府衙内举行府试，"天开文运"横匾高悬。城脚下江湖艺人表演走绳索、耍猴舞狮。胥门外客栈林立，是商旅集散之地。',
+  },
+  {
+    id: 'S07', name: '阊门', tag: '繁华市井',
+    colors: ['#B22222','#CC3333','#D44444','#D4AF37','#E8C964','#FFD700','#8B0000','#C17817','#D49030'],
+    pieceNames: ['绸缎大店','药材铺','书坊字画','皮货行','钱庄典当','金银珠宝','酒楼饭馆','走绳索','阊门商街'],
+    knowledge: '阊门一带是苏州最繁华的商业中心，图中有260余家可辨认市招。七间门面的绸缎大店、四间门面的药材铺、三间门面的皮货行——商铺鳞次栉比，车水马龙。',
+  },
+  {
+    id: 'S08', name: '山塘街', tag: '七里山塘',
+    colors: ['#CD853F','#DEB887','#F5DEB3','#D2691E','#E8A040','#FFDEAD','#C19A6B','#8B6F4E','#A0826D'],
+    pieceNames: ['义学书屋','面馆馒头','花木盆景','虎丘名席','黄鹂坊桥','婚礼花轿','茶食点心','雅扇灯笼','山塘桥'],
+    knowledge: '山塘街自虎丘至阊门长约七里，是苏州最热闹的街市之一。桥西义学塾师辅导九个孩童，花市为江南最大。三鲜大面、大肉馒头等美食飘香，雅扇灯笼琳琅满目。',
+  },
+  {
+    id: 'S09', name: '太湖', tag: '烟波浩渺',
+    colors: ['#4682B4','#5F9EA0','#708090','#87CEEB','#B0C4DE','#ADD8E6','#6495ED','#7B68EE','#483D8B'],
+    pieceNames: ['烟波浩渺','远山如黛','渔村散布','帆影点点','渔夫撒网','湖上归舟','水乡宁静','湖畔炊烟','太湖渔歌'],
+    knowledge: '画卷起首即为太湖一角，烟波浩渺，远山如黛。范成大诗云"太湖三万六千顷，点点渔灯照客船"。湖边渔村散布，渔夫清晨出海、傍晚满载而归。',
+  },
+];
+
+// ─── 游戏状态 ────────────────────────────────────────
+let currentScene = null;
+let pieces = [];        // 当前排列
+let solution = [];      // 正确排列 [0,1,2,...,8]
+let selectedPiece = -1;
+let moves = 0;
+let timerInterval = null;
+let elapsed = 0;
+
+// 初始化场景选择
+function initSceneGrid() {
+  const grid = document.getElementById('sceneGrid');
+  grid.innerHTML = SCENES.map((s, i) => `
+    <div class="scene-card" onclick="selectScene(${i})" style="background:${s.colors[4]}20">
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,${s.colors[0]},${s.colors[4]});opacity:.12"></div>
+      <div class="scene-card-name">${s.name}</div>
+      <div class="scene-card-tag">${s.tag}</div>
+    </div>
+  `).join('');
+}
+
+function selectScene(idx) {
+  currentScene = SCENES[idx];
+  moves = 0;
+  elapsed = 0;
+  selectedPiece = -1;
+
+  window.SuzhouGame.name = '场景拼图 · ' + currentScene.name;
+  window.SuzhouGame.type = 'puzzle';
+  window.SuzhouGame.start();
+
+  // 生成拼图
+  solution = Array.from({length: 9}, (_, i) => i);
+  pieces = shuffle(solution);
+  // 确保打乱了
+  while (arraysEqual(pieces, solution)) {
+    pieces = shuffle(solution);
+  }
+
+  renderPuzzle();
+  renderReference();
+  startTimer();
+  showScreen('screen-play');
+  document.getElementById('completeOverlay').style.display = 'none';
+}
+
+function renderPuzzle() {
+  const grid = document.getElementById('puzzleGrid');
+  grid.innerHTML = pieces.map((pieceIdx, slotIdx) => {
+    const s = currentScene;
+    const col = pieceIdx % 3;
+    const row = Math.floor(pieceIdx / 3);
+    return `
+      <div class="puzzle-piece ${pieceIdx === slotIdx ? 'correct' : ''} ${selectedPiece === slotIdx ? 'selected' : ''}"
+           style="background:${s.colors[pieceIdx]}; grid-column:${(slotIdx%3)+1}; grid-row:${Math.floor(slotIdx/3)+1}"
+           onclick="clickPiece(${slotIdx})">
+        <span class="piece-number">${pieceIdx + 1}</span>
+        <span class="piece-label">${s.pieceNames[pieceIdx]}</span>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('movesDisplay').textContent = moves;
+}
+
+function renderReference() {
+  const ref = document.getElementById('referenceImg');
+  const s = currentScene;
+  ref.innerHTML = `
+    <div style="padding:8px;font-size:.8rem;color:var(--text-muted);text-align:center">
+      参考图：${s.name}（正确排列）
+    </div>
+    <div class="reference-grid">
+      ${s.colors.map((c, i) => `
+        <div class="reference-cell" style="background:${c}">
+          <span style="font-size:.55rem">${s.pieceNames[i]}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function clickPiece(slotIdx) {
+  if (selectedPiece === -1) {
+    selectedPiece = slotIdx;
+    renderPuzzle();
+  } else if (selectedPiece === slotIdx) {
+    selectedPiece = -1;
+    renderPuzzle();
+  } else {
+    // 交换
+    [pieces[selectedPiece], pieces[slotIdx]] = [pieces[slotIdx], pieces[selectedPiece]];
+    moves++;
+    selectedPiece = -1;
+    renderPuzzle();
+
+    // 检查完成
+    if (arraysEqual(pieces, solution)) {
+      completePuzzle();
+    }
+  }
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  elapsed = 0;
+  timerInterval = setInterval(() => {
+    elapsed++;
+    const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+function completePuzzle() {
+  clearInterval(timerInterval);
+
+  window.SuzhouGame.getScore = () => ({
+    total: 1, correct: 1, time: elapsed, moves: moves,
+  });
+
+  const m = Math.floor(elapsed / 60);
+  const s = elapsed % 60;
+  const timeStr = m > 0 ? `${m}分${s}秒` : `${s}秒`;
+
+  document.getElementById('completeTitle').textContent = `${currentScene.name} · 拼图完成！`;
+  document.getElementById('completeText').textContent = `用时 ${timeStr}，共 ${moves} 步`;
+  document.getElementById('completeStats').innerHTML = `
+    <div class="stat-item"><span class="stat-value">${timeStr}</span><span class="stat-label">用时</span></div>
+    <div class="stat-item"><span class="stat-value">${moves}</span><span class="stat-label">步数</span></div>
+  `;
+  document.getElementById('completeKnowledge').innerHTML = `
+    <span class="kc-tag">${currentScene.tag}</span>
+    <div class="kc-text">${currentScene.knowledge}</div>
+  `;
+  document.getElementById('completeOverlay').style.display = 'flex';
+}
+
+function backToSelect() {
+  clearInterval(timerInterval);
+  document.getElementById('completeOverlay').style.display = 'none';
+  showScreen('screen-start');
+}
+
+function replayScene() {
+  const idx = SCENES.findIndex(s => s.id === currentScene.id);
+  if (idx >= 0) selectScene(idx);
+}
+
+function toggleReference() {
+  document.getElementById('referenceImg').classList.toggle('show');
+}
+
+function arraysEqual(a, b) {
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+}
+
+// 初始化
+initSceneGrid();
+
+window.SuzhouGame.reset = () => backToSelect();
+</script>
+</body>
+</html>
