@@ -22,13 +22,14 @@
 
   <!-- ═══ 开场 ═══ -->
   <div id="intro" role="button" tabindex="0" aria-label="点击进入展览">
+    <div id="intro-bg"></div>
     <canvas id="intro-canvas"></canvas>
     <div class="intro-content">
-      <div class="intro-title">姑 苏 繁 华 图</div>
+      <div class="intro-title">姑 蘇 繁 華 圖</div>
       <div class="intro-divider"></div>
-      <div class="intro-subtitle">清 · 徐扬 &nbsp; 乾隆二十四年（1759）</div>
+      <div class="intro-subtitle">清 · 徐揚 &nbsp; 乾隆二十四年（1759）</div>
       <div class="intro-seal">徐揚</div>
-      <div class="intro-hint">— 点击任意处进入画卷 —</div>
+      <div class="intro-hint">— 點擊任意處進入畫卷 —</div>
     </div>
   </div>
 
@@ -39,6 +40,37 @@
       <div class="identity-greeting">今朝是乾隆二十四年，暮春之初，恭迎小主来到姑苏城……</div>
       <div class="identity-prompt">（请选择您的身份）</div>
       <div class="identity-cards" id="identityCards"></div>
+    </div>
+  </div>
+
+  <!-- ═══ 功能引导浮层 ═══ -->
+  <div id="tutorial-overlay">
+    <div class="tutorial-card">
+      <div class="tutorial-title">操作指引</div>
+      <div class="tutorial-items">
+        <div class="tutorial-item">
+          <div class="tutorial-text"><strong>滚动浏览</strong> — 上下滚动鼠标/手指，画卷自右向左徐徐展开</div>
+        </div>
+        <div class="tutorial-item">
+          <div class="tutorial-text"><strong>文化场景</strong> — 点击画卷上的红色脉冲圆点，观看文化场景动态视频</div>
+        </div>
+        <div class="tutorial-item">
+          <div class="tutorial-text"><strong>场景详情</strong> — 点击底部进度条上的地名标签，查看场景详细信息</div>
+        </div>
+        <div class="tutorial-item">
+          <div class="tutorial-text"><strong>角色信息</strong> — 点击左下角角色标签，查看当前角色完整档案</div>
+        </div>
+        <div class="tutorial-item">
+          <div class="tutorial-text"><strong>近观画卷</strong> — 点击右下「近观」按钮，放大查看画作细节</div>
+        </div>
+        <div class="tutorial-item">
+          <div class="tutorial-text"><strong>寻迹定位</strong> — 点击「寻迹」按钮，快速定位你在画卷中的位置</div>
+        </div>
+        <div class="tutorial-item">
+          <div class="tutorial-text"><strong>背景音乐</strong> — 点击右下角音乐按钮，随时开关背景音乐</div>
+        </div>
+      </div>
+      <button class="tutorial-close" id="tutorialClose">开始</button>
     </div>
   </div>
 
@@ -207,5 +239,12 @@
   <!-- Data & Logic -->
   <script src="data.js"></script>
   <script src="main.js"></script>
+  <!-- ═══ 背景音乐 ═══ -->
+  <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
+  <button id="bgm-toggle" title="背景音乐">
+    <svg id="bgm-icon-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+    <svg id="bgm-icon-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+  </button>
+
 </body>
 </html>

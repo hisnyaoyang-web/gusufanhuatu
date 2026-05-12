@@ -62,6 +62,102 @@ html, body {
   to { transform: rotate(360deg); }
 }
 
+/* ─── 功能引导浮层 ──────────────────────────────────────── */
+#tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#tutorial-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+#tutorial-overlay.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.tutorial-card {
+  background: #1a1a1a;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  padding: 36px 40px 28px;
+  max-width: 520px;
+  width: 90vw;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.tutorial-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--accent-gold);
+  text-align: center;
+  letter-spacing: 0.3em;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.tutorial-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.tutorial-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.tutorial-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tutorial-text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.7;
+}
+
+.tutorial-text strong {
+  color: var(--bg-paper);
+}
+
+.tutorial-close {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  letter-spacing: 0.2em;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tutorial-close:hover {
+  background: var(--accent-gold);
+  color: #1a1a1a;
+}
+
 /* ─── 开场动画 ──────────────────────────────────────────── */
 #intro {
   position: fixed;
@@ -76,6 +172,33 @@ html, body {
   cursor: pointer;
 }
 
+/* 画卷截图底层 */
+#intro-bg {
+  position: absolute;
+  inset: 0;
+  background: url('assets/images/intro_bg.jpg') center/cover no-repeat;
+  opacity: 0;
+  animation: introBgFadeIn 2.5s ease 0.3s forwards;
+}
+
+/* 暗色渐变遮罩：上半透画面，下半遮深保文字 */
+#intro-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.3) 0%,
+    rgba(10, 10, 10, 0.7) 40%,
+    rgba(10, 10, 10, 0.88) 60%,
+    rgba(10, 10, 10, 0.95) 100%
+  );
+}
+
+@keyframes introBgFadeIn {
+  to { opacity: 1; }
+}
+
 #intro.fade-out {
   opacity: 0;
   visibility: hidden;
@@ -87,6 +210,8 @@ html, body {
   inset: 0;
   width: 100%;
   height: 100%;
+  opacity: 0.4;
+  mix-blend-mode: screen;
 }
 
 .intro-content {
@@ -1675,6 +1800,50 @@ html, body {
   color: var(--bg-dark);
 }
 
+/* ── 视频模式 ── */
+.zoom-overlay-frame.video-mode {
+  cursor: default;
+  background: #000;
+  display: flex;
+  flex-direction: row;
+}
+
+.zoom-overlay-frame.video-mode .zoom-overlay-content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.zoom-overlay-frame.video-mode .zoom-overlay-scene-name {
+  bottom: auto;
+  top: 16px;
+}
+
+.zoom-overlay-frame.video-mode .zoom-overlay-story {
+  position: relative;
+  top: auto;
+  left: auto;
+  max-width: 280px;
+  max-height: none;
+  width: 280px;
+  flex-shrink: 0;
+  transform: none;
+  border-radius: 0 4px 4px 0;
+  order: -1;
+}
+
+.zoom-overlay-frame.video-mode .zoom-overlay-story.visible {
+  transform: none;
+}
+
+.zoom-overlay-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  outline: none;
+}
+
 .zoom-overlay-scene-name {
   position: absolute;
   bottom: 16px;
@@ -1742,4 +1911,29 @@ html, body {
   font-size: 11px;
   font-weight: 600;
   margin-bottom: 6px;
+}
+
+/* ─── 背景音乐按钮 ───────────────────────────────────────── */
+#bgm-toggle {
+  position: fixed;
+  bottom: 72px;
+  right: 24px;
+  z-index: 8000;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-gold);
+  background: rgba(26, 26, 26, 0.8);
+  color: var(--accent-gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  backdrop-filter: blur(6px);
+}
+
+#bgm-toggle:hover {
+  background: var(--accent-gold);
+  color: var(--bg-dark);
 }

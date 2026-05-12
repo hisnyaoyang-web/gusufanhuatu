@@ -743,10 +743,10 @@ function endGame() {
   });
 
   let icon, title, desc;
-  if (gameScore >= 80)      { icon = '🏆'; title = '姑苏百事通！'; desc = '小顺对您佩服得五体投地，逢人便说"我家小主是姑苏城里头一号百事通"！'; }
-  else if (gameScore >= 50) { icon = '📖'; title = '姑苏熟客'; desc = '小顺已经很信任您了，跑腿时遇到不认得的场景总爱来问问。'; }
-  else if (gameScore >= 30) { icon = '🔍'; title = '初识姑苏'; desc = '小顺觉得您对姑苏略知一二，还得多逛逛才行。'; }
-  else                      { icon = '📜'; title = '初来乍到'; desc = '小顺心想：小主怕是跟我一样，也是头回来苏州吧……'; }
+  if (gameScore >= 80)      { icon = ''; title = '姑苏百事通！'; desc = '小顺对您佩服得五体投地，逢人便说"您是姑苏城里头一号百事通"！'; }
+  else if (gameScore >= 50) { icon = ''; title = '姑苏熟客'; desc = '小顺已经很信任您了，跑腿时遇到不认得的场景总爱来问问。'; }
+  else if (gameScore >= 30) { icon = ''; title = '初识姑苏'; desc = '小顺觉得您对姑苏略知一二，还得多逛逛才行。'; }
+  else                      { icon = ''; title = '初来乍到'; desc = '小顺心想：小主怕是跟我一样，也是头回来苏州吧……'; }
 
   document.getElementById('resultIcon').textContent = icon;
   document.getElementById('resultTitle').textContent = title;

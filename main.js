@@ -86,6 +86,27 @@
     dom.gameOverlayClose = $('#gameOverlayClose');
   }
 
+  // ─── 背景音乐控制 ────────────────────────────────
+  function initBgmToggle() {
+    const btn = document.getElementById('bgm-toggle');
+    const bgm = document.getElementById('bgm');
+    const iconOn = document.getElementById('bgm-icon-on');
+    const iconOff = document.getElementById('bgm-icon-off');
+    if (!btn || !bgm) return;
+
+    btn.addEventListener('click', () => {
+      if (bgm.paused) {
+        bgm.play().catch(() => {});
+        iconOn.style.display = '';
+        iconOff.style.display = 'none';
+      } else {
+        bgm.pause();
+        iconOn.style.display = 'none';
+        iconOff.style.display = '';
+      }
+    });
+  }
+
   // ═══════════════════════════════════════════════════
   //  1. 开场水墨动画（远山 + 云雾）
   // ═══════════════════════════════════════════════════
@@ -169,10 +190,15 @@
 
     function enter() {
       cancelAnimationFrame(animId);
+      // 启动背景音乐
+      const bgm = document.getElementById('bgm');
+      if (bgm) {
+        bgm.volume = 0.3;
+        bgm.play().catch(() => {});
+      }
       dom.intro.classList.add('fade-out');
       setTimeout(() => {
         dom.intro.style.display = 'none';
-        // 立即显示身份选择（已有黑底，无缝过渡）
         showIdentitySelection();
       }, 1200);
     }
@@ -225,8 +251,23 @@
     el.classList.add('fade-out');
     setTimeout(() => {
       el.style.display = 'none';
-      initScroll();
+      showTutorial();
     }, 800);
+  }
+
+  // ─── 功能引导 ──────────────────────────────────────
+  function showTutorial() {
+    // 确保身份选择层完全隐藏
+    const idSel = document.getElementById('identity-selection');
+    if (idSel) idSel.style.display = 'none';
+
+    const overlay = document.getElementById('tutorial-overlay');
+    if (!overlay) { initScroll(); return; }
+    overlay.classList.add('show');
+    document.getElementById('tutorialClose').addEventListener('click', () => {
+      overlay.classList.remove('show');
+      initScroll();
+    });
   }
 
   // ─── 角色信息面板 ──────────────────────────────────────
@@ -323,92 +364,118 @@
     const content = dom.zoomOverlayContent;
     content.innerHTML = '';
 
-    // 创建图片条
-    const strip = document.createElement('div');
-    strip.className = 'zoom-img-strip';
-    TILE_NAMES.forEach(name => {
-      const img = document.createElement('img');
-      img.src = 'assets/images/tiles/' + name;
-      img.alt = '';
-      img.draggable = false;
-      strip.appendChild(img);
-    });
-    content.appendChild(strip);
-
-    // 等图片加载后计算缩放
-    const firstImg = strip.querySelector('img');
-    function positionStrip() {
-      const totalWidth = strip.scrollWidth;
-      const frameW = content.clientWidth;
-      const frameH = content.clientHeight;
-      const scale = 2.5;
-
-      // 场景点在未缩放strip中的像素位置
-      const sx = totalWidth * scene.x / 100;
-      const sy = frameH * scene.y / 100;
-
-      // 让场景点居中在 frame 中
-      const tx = frameW / 2 - sx * scale;
-      const ty = frameH / 2 - sy * scale;
-
-      overlayDrag.tx = tx;
-      overlayDrag.ty = ty;
-
-      strip.style.transition = 'none';
-      strip.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
-      // 下一帧恢复 transition
-      requestAnimationFrame(() => {
-        strip.style.transition = '';
-      });
-    }
-
-    if (firstImg && firstImg.complete) {
-      positionStrip();
-    } else if (firstImg) {
-      firstImg.addEventListener('load', positionStrip);
-      // 备用：即使图片没加载完也定位
-      setTimeout(positionStrip, 500);
-    }
-
-    // 拖动逻辑
-    overlayDrag.active = false;
-
+    // 检查是否有对应视频
+    const videoSrc = culturalName && typeof CULTURAL_VIDEOS !== 'undefined' ? CULTURAL_VIDEOS[culturalName] : null;
     const frame = content.closest('.zoom-overlay-frame');
 
-    frame.onmousedown = (e) => {
-      if (e.target.closest('.zoom-overlay-close')) return;
-      overlayDrag.active = true;
-      overlayDrag.lastX = e.clientX;
-      overlayDrag.lastY = e.clientY;
-      e.preventDefault();
-    };
+    if (videoSrc) {
+      // ── 视频模式 ──
+      frame.classList.add('video-mode');
 
-    window.addEventListener('mousemove', onOverlayDrag);
-    window.addEventListener('mouseup', onOverlayDragEnd);
+      const video = document.createElement('video');
+      video.className = 'zoom-overlay-video';
+      video.src = videoSrc;
+      video.autoplay = true;
+      video.loop = true;
+      video.muted = false;
+      video.playsInline = true;
+      video.controls = true;
+      content.appendChild(video);
 
-    function onOverlayDrag(e) {
-      if (!overlayDrag.active) return;
-      overlayDrag.tx += e.clientX - overlayDrag.lastX;
-      overlayDrag.ty += e.clientY - overlayDrag.lastY;
-      overlayDrag.lastX = e.clientX;
-      overlayDrag.lastY = e.clientY;
-      strip.style.transition = 'none';
-      strip.style.transform = `translate(${overlayDrag.tx}px,${overlayDrag.ty}px) scale(2.5)`;
-    }
+      // 暂停背景音乐
+      const bgm = document.getElementById('bgm');
+      const bgmWasPlaying = bgm && !bgm.paused;
+      if (bgmWasPlaying) bgm.pause();
 
-    function onOverlayDragEnd() {
-      if (overlayDrag.active) {
-        overlayDrag.active = false;
-        strip.style.transition = '';
+      dom.zoomOverlay._cleanup = () => {
+        video.pause();
+        video.src = '';
+        video.load();
+        frame.classList.remove('video-mode');
+        // 恢复背景音乐
+        if (bgmWasPlaying) bgm.play().catch(() => {});
+      };
+    } else {
+      // ── 原始画卷放大模式 ──
+      frame.classList.remove('video-mode');
+
+      const strip = document.createElement('div');
+      strip.className = 'zoom-img-strip';
+      TILE_NAMES.forEach(name => {
+        const img = document.createElement('img');
+        img.src = 'assets/images/tiles/' + name;
+        img.alt = '';
+        img.draggable = false;
+        strip.appendChild(img);
+      });
+      content.appendChild(strip);
+
+      const firstImg = strip.querySelector('img');
+      function positionStrip() {
+        const totalWidth = strip.scrollWidth;
+        const frameW = content.clientWidth;
+        const frameH = content.clientHeight;
+        const scale = 2.5;
+
+        const sx = totalWidth * scene.x / 100;
+        const sy = frameH * scene.y / 100;
+
+        const tx = frameW / 2 - sx * scale;
+        const ty = frameH / 2 - sy * scale;
+
+        overlayDrag.tx = tx;
+        overlayDrag.ty = ty;
+
+        strip.style.transition = 'none';
+        strip.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+        requestAnimationFrame(() => {
+          strip.style.transition = '';
+        });
       }
-    }
 
-    // 存储清理函数
-    dom.zoomOverlay._cleanup = () => {
-      window.removeEventListener('mousemove', onOverlayDrag);
-      window.removeEventListener('mouseup', onOverlayDragEnd);
-      frame.onmousedown = null;
-    };
+      if (firstImg && firstImg.complete) {
+        positionStrip();
+      } else if (firstImg) {
+        firstImg.addEventListener('load', positionStrip);
+        setTimeout(positionStrip, 500);
+      }
+
+      overlayDrag.active = false;
+
+      frame.onmousedown = (e) => {
+        if (e.target.closest('.zoom-overlay-close')) return;
+        overlayDrag.active = true;
+        overlayDrag.lastX = e.clientX;
+        overlayDrag.lastY = e.clientY;
+        e.preventDefault();
+      };
+
+      window.addEventListener('mousemove', onOverlayDrag);
+      window.addEventListener('mouseup', onOverlayDragEnd);
+
+      function onOverlayDrag(e) {
+        if (!overlayDrag.active) return;
+        overlayDrag.tx += e.clientX - overlayDrag.lastX;
+        overlayDrag.ty += e.clientY - overlayDrag.lastY;
+        overlayDrag.lastX = e.clientX;
+        overlayDrag.lastY = e.clientY;
+        strip.style.transition = 'none';
+        strip.style.transform = `translate(${overlayDrag.tx}px,${overlayDrag.ty}px) scale(2.5)`;
+      }
+
+      function onOverlayDragEnd() {
+        if (overlayDrag.active) {
+          overlayDrag.active = false;
+          strip.style.transition = '';
+        }
+      }
+
+      dom.zoomOverlay._cleanup = () => {
+        window.removeEventListener('mousemove', onOverlayDrag);
+        window.removeEventListener('mouseup', onOverlayDragEnd);
+        frame.onmousedown = null;
+      };
+    }
 
     // 显示场景名
     dom.zoomOverlaySceneName.textContent = culturalName || '';
@@ -1211,6 +1278,7 @@
   function init() {
     cacheDom();
     initIntro();
+    initBgmToggle();
     initProgressClick();
     initZoomOverlay();
     initNarrativeTrigger();
