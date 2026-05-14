@@ -252,17 +252,17 @@ const CULTURAL_HOTSPOTS = [
 
 // ─── 文化场景视频映射 ──────────────────────────────────────
 const CULTURAL_VIDEOS = {
-  '灵岩山雅集':   'assets/videos/灵岩山雅集/video.mov',
-  '木渎三弦弹唱': 'assets/videos/木渎三弦弹唱/video.mp4',
-  '遂初园堂会':   'assets/videos/遂初园堂会/video.mp4',
-  '木渎迎亲船队': 'assets/videos/木渎迎亲船队/video.mp4',
-  '春台社戏':     'assets/videos/春台社戏/video.mp4',
-  '府衙府试':     'assets/videos/府衙府试/video.mp4',
-  '阊门走绳索':   'assets/videos/阊门走绳索/video.mp4',
-  '怡老园':       'assets/videos/怡老园/video.mp4',
-  '山塘义学':     'assets/videos/山塘义学/video.mp4',
-  '黄鹂坊桥婚礼': 'assets/videos/黄鹂坊桥婚礼/video.mp4',
-  '山塘花市':     'assets/videos/山塘花市/video.mp4',
+  '灵岩山雅集':   'assets/videos/lingyanshan-yaji/video.mov',
+  '木渎三弦弹唱': 'assets/videos/mudu-sanxian/video.mp4',
+  '遂初园堂会':   'assets/videos/suichuyuan-tanghui/video.mp4',
+  '木渎迎亲船队': 'assets/videos/mudu-yingqin/video.mp4',
+  '春台社戏':     'assets/videos/chuntai-shexi/video.mp4',
+  '府衙府试':     'assets/videos/fuya-fushi/video.mp4',
+  '阊门走绳索':   'assets/videos/changmen-zoushengsuo/video.mp4',
+  '怡老园':       'assets/videos/yilaoyuan/video.mp4',
+  '山塘义学':     'assets/videos/shantang-yixue/video.mp4',
+  '黄鹂坊桥婚礼': 'assets/videos/huanglifangqiao-hunli/video.mp4',
+  '山塘花市':     'assets/videos/shantang-huashi/video.mp4',
 };
 
 // ─── 角色数据（故事荟）─────────────────────────────────────

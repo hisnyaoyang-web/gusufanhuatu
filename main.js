@@ -946,6 +946,7 @@
     document.getElementById('npcAccept').addEventListener('click', () => {
       closeNpcDialog();
       openGame('games/spot-custom/spot-custom.html');
+      showQuizBtn();
     });
   }
 
