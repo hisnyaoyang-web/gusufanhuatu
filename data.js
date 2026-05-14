@@ -252,7 +252,7 @@ const CULTURAL_HOTSPOTS = [
 
 // ─── 文化场景视频映射 ──────────────────────────────────────
 const CULTURAL_VIDEOS = {
-  '灵岩山雅集':   'assets/videos/lingyanshan-yaji/video.mov',
+  '灵岩山雅集':   'assets/videos/lingyanshan-yaji/video.mp4',
   '木渎三弦弹唱': 'assets/videos/mudu-sanxian/video.mp4',
   '遂初园堂会':   'assets/videos/suichuyuan-tanghui/video.mp4',
   '木渎迎亲船队': 'assets/videos/mudu-yingqin/video.mp4',
