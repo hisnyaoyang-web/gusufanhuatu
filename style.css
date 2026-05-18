@@ -671,10 +671,10 @@ html, body {
   width: 24px;
   height: 24px;
   border: 3px solid #fff;
-  background: rgba(220, 60, 40, 0.85);
+  background: rgba(212, 175, 55, 0.9);
   box-shadow:
-    0 0 0 3px rgba(220, 60, 40, 0.4),
-    0 0 12px rgba(220, 60, 40, 0.35),
+    0 0 0 3px rgba(212, 175, 55, 0.4),
+    0 0 12px rgba(212, 175, 55, 0.35),
     0 2px 6px rgba(0, 0, 0, 0.4);
   z-index: 10;
   animation: culturalPulse 2.5s ease-in-out infinite;
@@ -682,10 +682,10 @@ html, body {
 
 .hotspot.cultural-hotspot:hover {
   transform: translate(-50%, -50%) scale(1.4);
-  background: rgba(220, 60, 40, 1);
+  background: rgba(212, 175, 55, 1);
   box-shadow:
-    0 0 0 5px rgba(220, 60, 40, 0.35),
-    0 0 20px rgba(220, 60, 40, 0.3),
+    0 0 0 5px rgba(212, 175, 55, 0.35),
+    0 0 20px rgba(212, 175, 55, 0.3),
     0 3px 10px rgba(0, 0, 0, 0.4);
   z-index: 15;
   animation: none;
@@ -705,14 +705,14 @@ html, body {
 @keyframes culturalPulse {
   0%, 100% {
     box-shadow:
-      0 0 0 3px rgba(220, 60, 40, 0.4),
-      0 0 12px rgba(220, 60, 40, 0.35),
+      0 0 0 3px rgba(212, 175, 55, 0.4),
+      0 0 12px rgba(212, 175, 55, 0.35),
       0 2px 6px rgba(0, 0, 0, 0.4);
   }
   50% {
     box-shadow:
-      0 0 0 8px rgba(220, 60, 40, 0.15),
-      0 0 24px rgba(220, 60, 40, 0.2),
+      0 0 0 8px rgba(212, 175, 55, 0.15),
+      0 0 24px rgba(212, 175, 55, 0.2),
       0 2px 6px rgba(0, 0, 0, 0.4);
   }
 }
