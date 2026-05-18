@@ -386,12 +386,12 @@ const FIND_ME_DATA = [
   },
   {
     id: 2,
-    name: "示例场景",
+    name: "婚礼仪仗队中的一员",
     image: "games/find-me/images/find-02.jpg",
-    hint: "在这里描述你要找的人物或场景特征",
+    hint: "迎亲队伍中手执仪仗的人物，身着礼服，行进在弄堂之中",
     answerX: 15.2,
     answerY: 72.0,
-    tolerance: 5,
+    tolerance: 8,
   },
   {
     id: 3,
@@ -413,9 +413,9 @@ const FIND_ME_DATA = [
   },
   {
     id: 5,
-    name: "城门脚下的热闹",
+    name: "木渎法云庵",
     image: "games/find-me/images/find-05.jpg",
-    hint: "城墙脚下人群聚集，各种活动热闹非凡",
+    hint: "木渎镇附近的法云庵，匾额题有「福国佑民」，庵内有古松一棵",
     answerX: 30.3,
     answerY: 59.5,
     tolerance: 5,

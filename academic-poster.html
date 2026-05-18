@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《姑苏繁华图》数字人文活化展 — 学术海报</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== 基础重置 ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===== 海报尺寸：A0 竖版 841×1189mm ===== */
+:root {
+  --paper: #f5f0e6;
+  --paper-dark: #ebe5d8;
+  --cinnabar: #B22222;
+  --cinnabar-light: #c94040;
+  --gold: #D4AF37;
+  --gold-light: #e8c96a;
+  --ink: #2F4F4F;
+  --ink-light: #4a6b6b;
+  --dark-brown: #3D2914;
+  --medium-brown: #6B4423;
+  --light-brown: #8B7355;
+  --border-decor: #c9b896;
+}
+
+body {
+  background: #333;
+  font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  color: var(--dark-brown);
+  line-height: 1.6;
+}
+
+/* 海报容器 */
+.poster {
+  width: 841mm;
+  min-height: 1189mm;
+  margin: 0 auto;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+  padding: 16mm 18mm;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 8mm;
+}
+
+/* ===== 装饰边框 ===== */
+.poster::before {
+  content: "";
+  position: absolute;
+  top: 6mm; left: 6mm; right: 6mm; bottom: 6mm;
+  border: 1.5mm double var(--cinnabar);
+  pointer-events: none;
+  z-index: 100;
+}
+.poster::after {
+  content: "";
+  position: absolute;
+  top: 10mm; left: 10mm; right: 10mm; bottom: 10mm;
+  border: 0.5mm solid var(--gold);
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* 四角装饰 */
+.corner-deco {
+  position: absolute;
+  width: 30mm;
+  height: 30mm;
+  z-index: 101;
+  pointer-events: none;
+}
+.corner-deco.tl { top: 12mm; left: 12mm; border-top: 2mm solid var(--cinnabar); border-left: 2mm solid var(--cinnabar); }
+.corner-deco.tr { top: 12mm; right: 12mm; border-top: 2mm solid var(--cinnabar); border-right: 2mm solid var(--cinnabar); }
+.corner-deco.bl { bottom: 12mm; left: 12mm; border-bottom: 2mm solid var(--cinnabar); border-left: 2mm solid var(--cinnabar); }
+.corner-deco.br { bottom: 12mm; right: 12mm; border-bottom: 2mm solid var(--cinnabar); border-right: 2mm solid var(--cinnabar); }
+
+/* ===== 顶部标题区 ===== */
+.header {
+  display: grid;
+  grid-template-columns: 0.8fr 3.4fr 0.8fr;
+  gap: 8mm;
+  align-items: center;
+  padding: 6mm 10mm;
+  background: linear-gradient(180deg, var(--paper-dark) 0%, var(--paper) 100%);
+  border-bottom: 1mm solid var(--cinnabar);
+  position: relative;
+}
+
+/* 左侧印章 */
+.seal-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.seal {
+  width: 28mm;
+  height: 28mm;
+  background: var(--cinnabar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: "Noto Serif SC", serif;
+  font-size: 9mm;
+  font-weight: 900;
+  border: 1mm solid var(--gold);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+}
+.seal-sub {
+  margin-top: 2mm;
+  font-size: 4mm;
+  color: var(--medium-brown);
+  font-family: "Noto Serif SC", serif;
+}
+
+/* 中间标题 */
+.title-block { text-align: center; }
+.title-cn {
+  font-family: "Noto Serif SC", serif;
+  font-size: 20mm;
+  font-weight: 900;
+  color: var(--cinnabar);
+  letter-spacing: 3.5mm;
+  line-height: 1.2;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+.title-en {
+  font-family: "DM Sans", sans-serif;
+  font-size: 6.5mm;
+  font-weight: 500;
+  color: var(--ink);
+  margin-top: 3mm;
+  letter-spacing: 0.5mm;
+  text-transform: uppercase;
+}
+.subtitle {
+  font-size: 5.5mm;
+  color: var(--medium-brown);
+  margin-top: 3mm;
+  font-family: "Noto Sans SC", sans-serif;
+}
+
+/* 右侧信息 */
+.meta-box {
+  text-align: right;
+  font-size: 4.2mm;
+  color: var(--medium-brown);
+  line-height: 1.8;
+}
+.meta-box .conf-name {
+  font-size: 5mm;
+  font-weight: 700;
+  color: var(--cinnabar);
+  margin-bottom: 2mm;
+}
+
+/* ===== 摘要条 ===== */
+.abstract-bar {
+  background: linear-gradient(90deg, rgba(178,34,34,0.06) 0%, transparent 100%);
+  padding: 4mm 10mm;
+  border-left: 1.5mm solid var(--cinnabar);
+}
+.abstract-text {
+  font-size: 3.8mm;
+  color: var(--dark-brown);
+  line-height: 1.6;
+  text-align: justify;
+  column-count: 2;
+  column-gap: 8mm;
+}
+.abstract-text .en {
+  font-family: "DM Sans", sans-serif;
+  font-size: 3.5mm;
+  color: var(--medium-brown);
+}
+
+/* ===== 主体三栏布局 ===== */
+.main-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 9mm;
+  padding: 0 3mm;
+}
+
+/* ===== 通用区块样式 ===== */
+.section {
+  margin-bottom: 7mm;
+  break-inside: avoid;
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 3mm;
+  margin-bottom: 3mm;
+  padding-bottom: 1.5mm;
+  border-bottom: 0.5mm solid var(--gold);
+}
+.section-num {
+  font-family: "DM Sans", sans-serif;
+  font-size: 5.5mm;
+  font-weight: 700;
+  color: var(--cinnabar);
+  line-height: 1;
+}
+.section-title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 5.2mm;
+  font-weight: 700;
+  color: var(--dark-brown);
+}
+.section-title-en {
+  font-family: "DM Sans", sans-serif;
+  font-size: 3.5mm;
+  font-weight: 500;
+  color: var(--light-brown);
+  text-transform: uppercase;
+  letter-spacing: 0.3mm;
+  margin-left: auto;
+}
+
+.section-body {
+  font-size: 3.7mm;
+  color: var(--dark-brown);
+  line-height: 1.65;
+  text-align: justify;
+}
+.section-body p {
+  margin-bottom: 2.5mm;
+  text-indent: 2em;
+}
+.section-body p.no-indent { text-indent: 0; }
+
+/* 高亮框 */
+.highlight-box {
+  background: linear-gradient(135deg, rgba(178,34,34,0.06) 0%, rgba(212,175,55,0.06) 100%);
+  border-left: 1mm solid var(--cinnabar);
+  padding: 4mm 5mm;
+  margin: 4mm 0;
+  font-size: 3.7mm;
+  line-height: 1.7;
+}
+
+/* 引用框 */
+.quote-box {
+  background: rgba(47,79,79,0.05);
+  border-left: 0.8mm solid var(--ink);
+  padding: 4mm 5mm;
+  margin: 4mm 0;
+  font-size: 3.6mm;
+  font-style: italic;
+  color: var(--ink);
+}
+
+/* 数据卡片 */
+.data-card {
+  background: white;
+  border: 0.3mm solid var(--border-decor);
+  padding: 4mm;
+  margin: 2mm 0;
+  text-align: center;
+}
+.data-card .number {
+  font-family: "DM Sans", sans-serif;
+  font-size: 9mm;
+  font-weight: 700;
+  color: var(--cinnabar);
+}
+.data-card .label {
+  font-size: 3.4mm;
+  color: var(--medium-brown);
+}
+
+/* 表格 */
+.poster-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 3.5mm;
+  margin: 3mm 0;
+}
+.poster-table th {
+  background: var(--cinnabar);
+  color: white;
+  padding: 2.5mm;
+  text-align: left;
+  font-weight: 600;
+}
+.poster-table td {
+  padding: 2.5mm;
+  border-bottom: 0.3mm solid var(--border-decor);
+}
+.poster-table tr:nth-child(even) {
+  background: rgba(212,175,55,0.05);
+}
+
+/* 列表 */
+.poster-list {
+  list-style: none;
+  padding: 0;
+}
+.poster-list li {
+  position: relative;
+  padding-left: 4mm;
+  margin-bottom: 2.5mm;
+  font-size: 3.7mm;
+}
+.poster-list li::before {
+  content: "◆";
+  position: absolute;
+  left: 0;
+  color: var(--cinnabar);
+  font-size: 2.5mm;
+}
+
+/* 图片容器 */
+.img-box {
+  background: white;
+  border: 0.5mm solid var(--border-decor);
+  padding: 3mm;
+  margin: 4mm 0;
+  text-align: center;
+}
+.img-box img {
+  max-width: 100%;
+  display: block;
+}
+.img-box .caption {
+  font-size: 3.4mm;
+  color: var(--medium-brown);
+  margin-top: 2mm;
+  font-style: italic;
+}
+
+/* 角色卡片 */
+.char-card {
+  display: flex;
+  gap: 3mm;
+  background: white;
+  border: 0.3mm solid var(--border-decor);
+  padding: 3mm;
+  margin: 3mm 0;
+  align-items: center;
+}
+.char-card .char-img {
+  width: 16mm;
+  height: 16mm;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 0.5mm solid var(--gold);
+}
+.char-card .char-info { flex: 1; }
+.char-card .char-name {
+  font-family: "Noto Serif SC", serif;
+  font-size: 4.2mm;
+  font-weight: 700;
+  color: var(--dark-brown);
+}
+.char-card .char-title {
+  font-size: 3.4mm;
+  color: var(--medium-brown);
+}
+
+/* 流程图 */
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  margin: 3mm 0;
+}
+.flow-step .step-num {
+  width: 7mm;
+  height: 7mm;
+  background: var(--cinnabar);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5mm;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.flow-step .step-text {
+  font-size: 3.6mm;
+  flex: 1;
+}
+.flow-arrow {
+  text-align: center;
+  color: var(--gold);
+  font-size: 5mm;
+  line-height: 1;
+}
+
+/* 底部 */
+.footer {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+  gap: 10mm;
+  padding: 6mm 12mm;
+  background: var(--paper-dark);
+  border-top: 0.8mm solid var(--cinnabar);
+  align-items: center;
+}
+.footer-left {
+  font-size: 3.5mm;
+  color: var(--medium-brown);
+}
+.footer-center {
+  text-align: center;
+}
+.qr-placeholder {
+  width: 22mm;
+  height: 22mm;
+  background: white;
+  border: 0.5mm solid var(--border-decor);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3mm;
+  color: var(--light-brown);
+}
+.footer-right {
+  text-align: right;
+  font-size: 3.5mm;
+  color: var(--medium-brown);
+}
+
+/* 分隔装饰 */
+.divider-deco {
+  text-align: center;
+  margin: 3mm 0;
+  color: var(--gold);
+  font-size: 4mm;
+  letter-spacing: 3mm;
+}
+
+/* 强调文字 */
+.em { color: var(--cinnabar); font-weight: 600; }
+.em-gold { color: var(--gold); font-weight: 600; }
+.em-ink { color: var(--ink); font-weight: 600; }
+
+/* 关键词标签 */
+.tag {
+  display: inline-block;
+  background: rgba(178,34,34,0.1);
+  color: var(--cinnabar);
+  padding: 0.5mm 2mm;
+  border-radius: 1mm;
+  font-size: 3.2mm;
+  margin: 0.5mm;
+}
+
+/* 小字注释 */
+.small-note {
+  font-size: 3mm;
+  color: var(--light-brown);
+  margin-top: 1mm;
+}
+
+/* 参考文献 */
+.ref-list {
+  font-size: 3.3mm;
+  color: var(--medium-brown);
+  line-height: 1.6;
+  padding-left: 4mm;
+}
+.ref-list li { margin-bottom: 1.5mm; }
+
+/* SVG图表 */
+.chart-container {
+  background: white;
+  border: 0.3mm solid var(--border-decor);
+  padding: 4mm;
+  margin: 4mm 0;
+}
+
+/* 架构图 */
+.arch-box {
+  background: linear-gradient(135deg, rgba(47,79,79,0.08) 0%, rgba(212,175,55,0.08) 100%);
+  border: 0.5mm solid var(--ink);
+  border-radius: 1mm;
+  padding: 4mm;
+  margin: 3mm 0;
+  text-align: center;
+  font-size: 3.6mm;
+  font-weight: 600;
+  color: var(--ink);
+}
+.arch-arrow {
+  text-align: center;
+  color: var(--cinnabar);
+  font-size: 4mm;
+}
+
+/* 两列小布局 */
+.cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4mm;
+}
+
+/* 打印优化 */
+@media print {
+  body { background: white; }
+  .poster { margin: 0; width: 841mm; height: 1189mm; }
+}
+</style>
+</head>
+<body>
+
+<div class="poster">
+  <!-- 四角装饰 -->
+  <div class="corner-deco tl"></div>
+  <div class="corner-deco tr"></div>
+  <div class="corner-deco bl"></div>
+  <div class="corner-deco br"></div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="seal-box">
+      <div class="seal">人文<br>数字</div>
+      <div class="seal-sub">Digital Humanities</div>
+    </div>
+    <div class="title-block">
+      <div class="title-cn">姑苏繁华图 · 数字人文活化展</div>
+      <div class="title-en">Digital Humanities Activation of Prosperous Suzhou</div>
+      <div class="subtitle">基于多视角叙事与交互式数据可视化的清代苏州城市文化数字重构研究</div>
+    </div>
+    <div class="meta-box">
+      <div class="conf-name">文化数据可视化 · 2026</div>
+      <div>武汉大学</div>
+      <div>数字人文研究中心</div>
+    </div>
+  </header>
+
+  <!-- ===== ABSTRACT ===== -->
+  <div class="abstract-bar">
+    <div class="abstract-text">
+      <strong>【摘要 · Abstract】</strong> 《姑苏繁华图》（1759）是清代宫廷画家徐扬描绘苏州城市风貌的巨幅风俗画长卷，全长1241厘米，现存辽宁省博物馆。本研究基于数字人文方法论，构建了一套完整的交互式展示系统，通过GSAP横向长卷滚动、D3.js数据可视化、三重视角角色叙事与多模态互动游戏，实现了从"观看对象"到"体验空间"的转化。系统以范金民等学者的学术研究成果为数据基础，涵盖260余家市招的行业分类统计、14项文化场景的42条多视角叙事文本，以及12个可交互文化热点。
+      <span class="en">This study presents a digital humanities activation system for <em>Prosperous Suzhou</em> (1759), a 12.41-meter Qing dynasty scroll painting by Xu Yang. Built upon rigorous academic data including 260+ identified shop signs and industry classifications, the system transforms the painting from a passive viewing object into an immersive experiential space through GSAP horizontal scroll, D3.js visualization, three-perspective narrative design, and multimodal interactive games.</span>
+    </div>
+  </div>
+
+  <!-- ===== MAIN BODY ===== -->
+  <div class="main-body">
+
+    <!-- ===== COLUMN 1 ===== -->
+    <div class="column">
+
+      <!-- 1. INTRODUCTION -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">01</span>
+          <span class="section-title">研究背景</span>
+          <span class="section-title-en">Introduction</span>
+        </div>
+        <div class="section-body">
+          <p>《姑苏繁华图》（又名《盛世滋生图》）由清代宫廷画家徐扬于乾隆二十四年（1759）创作，是仅次于《清明上河图》的中国古代风俗画巨作。画卷全长<span class="em">1241厘米</span>，以连续全景式构图描绘了从苏州城西天平山至虎丘的繁华市井，包含人物约<span class="em">12,000余人</span>、船只约<span class="em">400条</span>、建筑约<span class="em">2,140余栋</span>、可辨认市招<span class="em">260余家</span>。</p>
+          <p>然而，传统博物馆展陈模式以静态展示为主，观众难以深入理解画卷中蕴含的丰富社会文化信息。数字人文（Digital Humanities）为这一问题提供了方法论支撑——通过计算技术与交互设计，将"观看对象"转化为"体验空间"。</p>
+          <div class="quote-box">
+            "图写太平" —— 徐扬创作目的<br>
+            <span style="font-size:3mm;color:var(--light-brown);">The painting aims to document and celebrate the prosperity of Suzhou under Qing rule.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. RESEARCH QUESTIONS -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">02</span>
+          <span class="section-title">研究问题</span>
+          <span class="section-title-en">Research Questions</span>
+        </div>
+        <div class="section-body">
+          <ul class="poster-list">
+            <li><strong>RQ1:</strong> 如何通过交互设计实现传统绘画的"活化表达"，使观众从被动观看转向主动探索？</li>
+            <li><strong>RQ2:</strong> 多视角叙事机制能否有效增强观众对清代城市文化的深度理解与情感共鸣？</li>
+            <li><strong>RQ3:</strong> 如何基于学术文献构建可信赖、可验证的数字文化体验数据基础？</li>
+            <li><strong>RQ4:</strong> 纯前端技术方案能否支撑复杂交互体验的低门槛部署与传播？</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 3. RELATED WORK -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">03</span>
+          <span class="section-title">相关工作</span>
+          <span class="section-title-en">Related Work</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent"><strong>数字人文与文化遗产可视化：</strong>近年来，数字人文领域涌现了大量文化遗产数字化项目。欧洲TimeMachine项目、美国Getty的Open Content项目等均致力于通过数字技术重构历史空间。然而，多数项目侧重于高精度图像存档，在<span class="em">叙事设计</span>与<span class="em">交互体验</span>方面仍有不足。</p>
+          <p class="no-indent"><strong>长卷画的数字化呈现：</strong>台北故宫的《富春山居图》合展、北京故宫的《清明上河图》动态版等项目尝试了长卷的动态展示，但多采用线性播放模式，缺乏用户主导的交互探索机制。</p>
+          <p class="no-indent"><strong>多视角叙事：</strong>文学研究中的多视角叙事理论（如热奈特的聚焦理论）为数字叙事设计提供了理论基础，但其在文化遗产可视化中的应用尚不多见。</p>
+        </div>
+      </section>
+
+      <!-- 4. METHODOLOGY -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">04</span>
+          <span class="section-title">研究方法</span>
+          <span class="section-title-en">Methodology</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent">本研究采用<strong>设计驱动研究（Design-Driven Research, DDR）</strong>方法论，结合<strong>用户中心设计（UCD）</strong>与<strong>文献驱动数据策展（Literature-Driven Data Curation）</strong>：</p>
+          <div class="highlight-box">
+            <strong>阶段一 · 文献调研：</strong>以范金民《〈姑苏繁华图〉：清代苏州城市文化繁荣的写照》为核心文献，辅以《姑苏繁华图》（文物出版社，1999）等资料，提取260余家市招的行业分类、地理分布与文化场景信息。<br><br>
+            <strong>阶段二 · 数据建模：</strong>建立场景-行业-文化-叙事四维数据模型，实现学术数据的结构化存储与关联查询。<br><br>
+            <strong>阶段三 · 交互设计：</strong>基于叙事传输理论（Transportation Theory）设计三重视角角色系统，通过身份代入增强文化理解深度。<br><br>
+            <strong>阶段四 · 技术实现：</strong>采用纯前端技术栈，确保系统的可移植性与低门槛部署。
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. DATA DESIGN -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">05</span>
+          <span class="section-title">数据设计</span>
+          <span class="section-title-en">Data Design</span>
+        </div>
+        <div class="section-body">
+          <div class="cols-2">
+            <div class="data-card">
+              <div class="number">9</div>
+              <div class="label">主场景</div>
+            </div>
+            <div class="data-card">
+              <div class="number">36</div>
+              <div class="label">行业数据条</div>
+            </div>
+            <div class="data-card">
+              <div class="number">15</div>
+              <div class="label">行业大类</div>
+            </div>
+            <div class="data-card">
+              <div class="number">12</div>
+              <div class="label">文化热点</div>
+            </div>
+            <div class="data-card">
+              <div class="number">42</div>
+              <div class="label">叙事文本</div>
+            </div>
+            <div class="data-card">
+              <div class="number">4</div>
+              <div class="label">角色数据</div>
+            </div>
+          </div>
+          <p class="no-indent" style="margin-top:2mm;"><strong>数据来源：</strong>范金民《〈姑苏繁华图〉：清代苏州城市文化繁荣的写照》系统统计了画中可辨认的260余家店铺市招，并按行业逐一分类考证。本研究将其转化为可计算、可交互的结构化数据。</p>
+        </div>
+      </section>
+
+      <!-- 5.5 INDUSTRY CHART -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">05+</span>
+          <span class="section-title">行业分布</span>
+          <span class="section-title-en">Industry Chart</span>
+        </div>
+        <div class="section-body">
+          <div class="chart-container">
+            <svg viewBox="0 0 280 160" style="width:100%;height:auto;">
+              <!-- 背景网格 -->
+              <defs>
+                <pattern id="grid" width="28" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 28 0 L 0 0 0 20" fill="none" stroke="#e0d5c0" stroke-width="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="280" height="160" fill="url(#grid)"/>
+              <!-- 柱状图 -->
+              <rect x="15" y="110" width="18" height="35" fill="#B22222" opacity="0.85"/>
+              <rect x="40" y="95" width="18" height="50" fill="#C17817" opacity="0.85"/>
+              <rect x="65" y="75" width="18" height="70" fill="#4A7C8F" opacity="0.85"/>
+              <rect x="90" y="55" width="18" height="90" fill="#8B6F4E" opacity="0.85"/>
+              <rect x="115" y="85" width="18" height="60" fill="#6B8E4E" opacity="0.85"/>
+              <rect x="140" y="100" width="18" height="45" fill="#B22222" opacity="0.6"/>
+              <rect x="165" y="120" width="18" height="25" fill="#C17817" opacity="0.6"/>
+              <rect x="190" y="105" width="18" height="40" fill="#4A7C8F" opacity="0.6"/>
+              <rect x="215" y="130" width="18" height="15" fill="#8B6F4E" opacity="0.6"/>
+              <rect x="240" y="115" width="18" height="30" fill="#6B8E4E" opacity="0.6"/>
+              <!-- 坐标轴 -->
+              <line x1="10" y1="145" x2="270" y2="145" stroke="#3D2914" stroke-width="1"/>
+              <line x1="10" y1="145" x2="10" y2="10" stroke="#3D2914" stroke-width="1"/>
+              <!-- 标签 -->
+              <text x="24" y="155" font-size="6" text-anchor="middle" fill="#6B4423">绸缎</text>
+              <text x="49" y="155" font-size="6" text-anchor="middle" fill="#6B4423">布匹</text>
+              <text x="74" y="155" font-size="6" text-anchor="middle" fill="#6B4423">饮食</text>
+              <text x="99" y="155" font-size="6" text-anchor="middle" fill="#6B4423">杂货</text>
+              <text x="124" y="155" font-size="6" text-anchor="middle" fill="#6B4423">书画</text>
+              <text x="149" y="155" font-size="6" text-anchor="middle" fill="#6B4423">药材</text>
+              <text x="174" y="155" font-size="6" text-anchor="middle" fill="#6B4423">铁器</text>
+              <text x="199" y="155" font-size="6" text-anchor="middle" fill="#6B4423">纸马</text>
+              <text x="224" y="155" font-size="6" text-anchor="middle" fill="#6B4423">灯笼</text>
+              <text x="249" y="155" font-size="6" text-anchor="middle" fill="#6B4423">洋货</text>
+              <text x="5" y="80" font-size="7" text-anchor="middle" fill="#3D2914" transform="rotate(-90 5 80)">店铺数量</text>
+            </svg>
+            <div class="caption">Fig.5 画中可辨认市招的行业分布统计（基于范金民研究）</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ===== COLUMN 2 ===== -->
+    <div class="column">
+
+      <!-- 6. SYSTEM ARCHITECTURE -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">06</span>
+          <span class="section-title">系统架构</span>
+          <span class="section-title-en">System Architecture</span>
+        </div>
+        <div class="section-body">
+          <div class="arch-box">Presentation Layer<br><span style="font-size:3mm;font-weight:400;color:var(--medium-brown);">HTML5 · CSS3 · Canvas</span></div>
+          <div class="arch-arrow">▼</div>
+          <div class="arch-box">Interaction Layer<br><span style="font-size:3mm;font-weight:400;color:var(--medium-brown);">GSAP ScrollTrigger · D3.js · Native JS</span></div>
+          <div class="arch-arrow">▼</div>
+          <div class="arch-box">Data Layer<br><span style="font-size:3mm;font-weight:400;color:var(--medium-brown);">JSON Data Modules · Percentage Coordinate System</span></div>
+          <div class="arch-arrow">▼</div>
+          <div class="arch-box">Asset Layer<br><span style="font-size:3mm;font-weight:400;color:var(--medium-brown);">10 Tile Images · Character Portraits · Cultural Videos</span></div>
+          <div class="divider-deco">❖ ❖ ❖</div>
+          <table class="poster-table">
+            <tr><th>模块</th><th>技术</th><th>版本/来源</th></tr>
+            <tr><td>页面结构</td><td>HTML5</td><td>—</td></tr>
+            <tr><td>样式系统</td><td>CSS3 Variables, backdrop-filter</td><td>—</td></tr>
+            <tr><td>交互逻辑</td><td>Native JavaScript (ES6+ IIFE)</td><td>—</td></tr>
+            <tr><td>滚动动画</td><td>GSAP + ScrollTrigger</td><td>3.12.5 CDN</td></tr>
+            <tr><td>数据可视化</td><td>D3.js</td><td>7.9.0 CDN</td></tr>
+            <tr><td>字体</td><td>Noto Serif SC / Noto Sans SC / DM Sans</td><td>Google Fonts</td></tr>
+          </table>
+          <div class="highlight-box" style="font-size:3.4mm;">
+            <strong>部署特性：</strong>纯静态部署，无构建工具，无后端依赖。所有依赖通过CDN引入，可直接用浏览器打开运行。
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. HORIZONTAL SCROLL MECHANISM -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">07</span>
+          <span class="section-title">长卷浏览机制</span>
+          <span class="section-title-en">Scroll Mechanism</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent">采用<strong>"竖向滚动驱动横向位移"</strong>方案，模拟中国传统手卷的展开过程：</p>
+          <div class="flow-step">
+            <div class="step-num">1</div>
+            <div class="step-text">页面总高度 = 100vh + 画卷总宽度 − 视口宽度</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">2</div>
+            <div class="step-text">GSAP ScrollTrigger 将 #painting-section pin 在视口内</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">3</div>
+            <div class="step-text">随垂直滚动，paintingContainer 自右向左徐徐展开</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">4</div>
+            <div class="step-text">scrub: 0.5 提供平滑跟随， anticipatePin: 1 优化性能</div>
+          </div>
+          <p class="no-indent" style="margin-top:2mm;"><strong>坐标系统：</strong>采用百分比相对坐标 (x, y) ∈ [0, 100]，与图像缩放解耦，天然响应式。10张tile按 flex 行排列，顺序为 tile10(虎丘) → tile01(天平山)。</p>
+        </div>
+      </section>
+
+      <!-- 8. THREE-PERSPECTIVE NARRATIVE -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">08</span>
+          <span class="section-title">三重视角叙事</span>
+          <span class="section-title-en">Multi-Perspective Narrative</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent">基于叙事传输理论，设计了三重身份视角系统。用户选择身份后，左侧竖排叙事卡片（writing-mode: vertical-rl）随滚动位置自动切换内容，实现<strong>同一场景、三种声音</strong>的多层次文化解读。</p>
+          <div class="char-card">
+            <img src="characters/wenren/shen/shen-image.jpg" class="char-img" alt="沈鹤年">
+            <div class="char-info">
+              <div class="char-name">沈鹤年 · 文人</div>
+              <div class="char-title">苏州府秀才，二十四岁，青蓝 #4A7C8F</div>
+            </div>
+          </div>
+          <div class="char-card">
+            <img src="characters/shangren/chen.jpg" class="char-img" alt="陈瑞丰">
+            <div class="char-info">
+              <div class="char-name">陈瑞丰 · 商人</div>
+              <div class="char-title">丝绸洋货商，三十七岁，琥珀 #C17817</div>
+            </div>
+          </div>
+          <div class="char-card">
+            <img src="characters/pingmin/gui.jpg" class="char-img" alt="阿桂">
+            <div class="char-info">
+              <div class="char-name">阿桂 · 百姓</div>
+              <div class="char-title">山塘街面馆帮工，十九岁，泥褐 #8B6F4E</div>
+            </div>
+          </div>
+          <div class="highlight-box" style="font-size:3.4mm;">
+            <strong>叙事设计原则：</strong>文人视角侧重历史典故与风雅审美；商人视角关注商业行情与利润计算；百姓视角聚焦日常生活与市井烟火。三种声音相互补充，构成完整的清代苏州社会图景。
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. CULTURAL HOTSPOTS -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">09</span>
+          <span class="section-title">文化热点</span>
+          <span class="section-title-en">Cultural Hotspots</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent">散布在画卷上的12个文化场景热点，点击后打开<strong>相框式放大叠加层</strong>，支持拖拽平移，显示场景名称与当前角色的文化故事。</p>
+          <table class="poster-table">
+            <tr><th>主题</th><th>场景</th><th>坐标(x,y)</th></tr>
+            <tr><td rowspan="3">科举教育</td><td>灵岩山雅集</td><td>(82.2, 77.4)</td></tr>
+            <tr><td>山塘义学</td><td>(13.3, 90.8)</td></tr>
+            <tr><td>府衙府试</td><td>(33.3, 21.0)</td></tr>
+            <tr><td rowspan="4">戏曲丝竹</td><td>木渎三弦弹唱</td><td>(78.6, 90.6)</td></tr>
+            <tr><td>遂初园堂会</td><td>(66.5, 68.3)</td></tr>
+            <tr><td>春台社戏</td><td>(51.3, 67.8)</td></tr>
+            <tr><td>阊门走绳索</td><td>(21.0, 72.4)</td></tr>
+            <tr><td rowspan="2">婚礼习俗</td><td>木渎迎亲船队</td><td>(75.9, 70.0)</td></tr>
+            <tr><td>黄鹂坊桥婚礼</td><td>(24.4, 73.9)</td></tr>
+            <tr><td rowspan="3">园林胜景</td><td>怡老园</td><td>(27.2, 72.8)</td></tr>
+            <tr><td>山塘花市</td><td>(10.0, 48.2)</td></tr>
+            <tr><td>虎丘云岩寺</td><td>(2.5, 11.0)</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- 9.5 INTERFACE SHOWCASE -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">09</span>
+          <span class="section-title">界面展示</span>
+          <span class="section-title-en">Interface</span>
+        </div>
+        <div class="section-body">
+          <div class="img-box">
+            <div style="width:100%;height:85mm;background:linear-gradient(90deg,#2F4F4F 0%,#3d5c5c 50%,#2F4F4F 100%);display:flex;align-items:center;justify-content:center;color:#D4AF37;font-family:'Noto Serif SC',serif;font-size:7mm;">开场水墨动画 · Ink Wash Intro</div>
+            <div class="caption">Fig.1 基于Canvas 2D的墨滴粒子扩散效果，20粒子径向渐变</div>
+          </div>
+          <div class="img-box">
+            <div style="width:100%;height:85mm;background:linear-gradient(90deg,#4A7C8F 0%,#C17817 33%,#8B6F4E 66%,#6B8E4E 100%);display:flex;align-items:center;justify-content:center;color:white;font-family:'Noto Serif SC',serif;font-size:6mm;">三角色身份选择 · Identity Selection</div>
+            <div class="caption">Fig.2 文人/商人/百姓三重身份卡片，悬停展开人物小传</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ===== COLUMN 3 ===== -->
+    <div class="column">
+
+      <!-- 10. INTERACTIVE FEATURES -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">10</span>
+          <span class="section-title">交互功能</span>
+          <span class="section-title-en">Interactive Features</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent"><strong>近观（Magnifier）：</strong>Canvas 圆形镜头（180px直径，2.5x放大），金色边框，从对应tile图片实时裁切绘制，跟随鼠标移动。激活时隐藏默认光标，提供细节鉴赏体验。</p>
+          <p class="no-indent"><strong>寻迹（Find-Me）：</strong>找图游戏，右上角弹出提示卡片显示目标小图、名称与文字提示。用户点击画卷，系统计算百分比坐标与答案对比（欧氏距离 < tolerance），正确显示绿色反馈圈，错误显示红色反馈圈。</p>
+          <p class="no-indent"><strong>NPC对话：</strong>滚动至画卷末尾（progress ≥ 0.99）触发NPC「陆小顺」对话，打字机效果逐行显示，可引导用户进入「看图识俗」小游戏。</p>
+          <p class="no-indent"><strong>看图识俗：</strong>全屏iframe加载小游戏，PostMessage通信，游戏内可关闭返回主页面。</p>
+          <div class="highlight-box" style="font-size:3.4mm;">
+            <strong>教育游戏化设计：</strong>寻迹游戏训练用户的视觉搜索与空间定位能力；看图识俗测试用户对清代苏州民俗的认知；NPC对话通过叙事引导增强沉浸感。
+          </div>
+        </div>
+      </section>
+
+      <!-- 10.5 DEMO SHOWCASE -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">10+</span>
+          <span class="section-title">演示截图</span>
+          <span class="section-title-en">Demo</span>
+        </div>
+        <div class="section-body">
+          <div class="img-box">
+            <div style="width:100%;height:80mm;background:linear-gradient(180deg,#B22222 0%,#8B1a1a 100%);display:flex;align-items:center;justify-content:center;color:#D4AF37;font-family:'Noto Serif SC',serif;font-size:6mm;">放大镜细节浏览 · Magnifier Mode</div>
+            <div class="caption">Fig.3 Canvas实时裁切渲染，2.5x放大，180px镜头</div>
+          </div>
+          <div class="img-box">
+            <div style="width:100%;height:80mm;background:linear-gradient(180deg,#2F4F4F 0%,#1a3333 100%);display:flex;align-items:center;justify-content:center;color:white;font-family:'Noto Serif SC',serif;font-size:6mm;">NPC对话系统 · NPC Dialogue</div>
+            <div class="caption">Fig.4 陆小顺打字机效果，引导进入「看图识俗」</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. VISUAL DESIGN SYSTEM -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">11</span>
+          <span class="section-title">视觉系统</span>
+          <span class="section-title-en">Visual Design</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent">视觉设计从中国传统绘画中汲取灵感，构建完整的色彩与字体系统：</p>
+          <div class="cols-2">
+            <div style="text-align:center;padding:2mm;">
+              <div style="width:100%;height:10mm;background:#f5f0e6;border:0.3mm solid #c9b896;margin-bottom:1mm;"></div>
+              <div style="font-size:3mm;color:var(--medium-brown);">宣纸底色 #f5f0e6</div>
+            </div>
+            <div style="text-align:center;padding:2mm;">
+              <div style="width:100%;height:10mm;background:#B22222;border:0.3mm solid #c9b896;margin-bottom:1mm;"></div>
+              <div style="font-size:3mm;color:var(--medium-brown);">朱砂红 #B22222</div>
+            </div>
+            <div style="text-align:center;padding:2mm;">
+              <div style="width:100%;height:10mm;background:#D4AF37;border:0.3mm solid #c9b896;margin-bottom:1mm;"></div>
+              <div style="font-size:3mm;color:var(--medium-brown);">金色 #D4AF37</div>
+            </div>
+            <div style="text-align:center;padding:2mm;">
+              <div style="width:100%;height:10mm;background:#2F4F4F;border:0.3mm solid #c9b896;margin-bottom:1mm;"></div>
+              <div style="font-size:3mm;color:var(--medium-brown);">墨色 #2F4F4F</div>
+            </div>
+          </div>
+          <div class="divider-deco" style="margin:2mm 0;">—</div>
+          <p class="no-indent" style="font-size:3.4mm;"><strong>字体：</strong>标题使用 Noto Serif SC（宋体风格），正文使用 Noto Sans SC，数据使用 DM Sans。<strong>动画：</strong>水墨粒子（Canvas 20粒子径向渐变）、热点呼吸（CSS @keyframes breathe 2.5s cycle）、竖向叙事滑入（GSAP fromTo x:-60→0）、打字机效果（JS setTimeout 45ms/字）。</p>
+        </div>
+      </section>
+
+      <!-- 12. EVALUATION -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">12</span>
+          <span class="section-title">评估与讨论</span>
+          <span class="section-title-en">Evaluation</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent"><strong>内容准确性：</strong>所有商业统计数据均来自范金民的学术论文，260余家市招的行业分类统计与文献记载相互印证。文化场景叙事文本经过学术文献校验，确保历史准确性。</p>
+          <p class="no-indent"><strong>技术性能：</strong>纯静态部署方案使系统可在任何静态服务器上运行，无需后端维护。GSAP ScrollTrigger 的 scrub: 0.5 与 anticipatePin: 1 确保了60fps的流畅滚动体验。</p>
+          <p class="no-indent"><strong>设计贡献：</strong></p>
+          <ul class="poster-list">
+            <li>首次将<strong>多视角叙事理论</strong>系统应用于中国古画数字化展示</li>
+            <li>提出了<strong>"竖向滚动驱动横向位移"</strong>的长卷交互范式</li>
+            <li>构建了<strong>百分比坐标系统</strong>，实现热点与画卷的响应式解耦</li>
+            <li>设计了<strong>学术数据→交互体验</strong>的完整转化流程</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 13. CONCLUSION -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">13</span>
+          <span class="section-title">结论与展望</span>
+          <span class="section-title-en">Conclusion</span>
+        </div>
+        <div class="section-body">
+          <p>本研究通过《姑苏繁华图》数字人文活化展的设计与实现，验证了数字人文方法在传统绘画"活化表达"中的有效性。三重视角叙事系统证明了多层次文化解读对观众理解深度的提升作用；纯前端技术方案证明了复杂交互体验的低门槛部署可行性。</p>
+          <div class="highlight-box">
+            <strong>未来工作：</strong><br>
+            • 视频场景：将文化场景详情页改为循环播放动态视频<br>
+            • 国际化（i18n）：提取文案为JSON语言包，支持中英文切换<br>
+            • 深度缩放：引入OpenSeadragon实现画作高精度缩放浏览<br>
+            • 古今对比：完善今昔对比滑块，增加更多对比照片<br>
+            • 热力图叠加：Canvas绘制商业密度热力图，叠加在画卷上<br>
+            • 角色动画：Sprite Sheet实现人物微动画
+          </div>
+        </div>
+      </section>
+
+      <!-- 14. REFERENCES -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">14</span>
+          <span class="section-title">参考文献</span>
+          <span class="section-title-en">References</span>
+        </div>
+        <div class="section-body">
+          <ol class="ref-list">
+            <li>范金民.《〈姑苏繁华图〉：清代苏州城市文化繁荣的写照》. 长江经济网.</li>
+            <li>苏州市城建档案馆、辽宁省博物馆 编.《姑苏繁华图》. 文物出版社, 1999.</li>
+            <li>徐扬 绘.《姑苏繁华图》. 香港商务印书馆, 1988.</li>
+            <li>《中国风俗画稀世珍品：姑苏繁华图》. （清）徐扬绘.</li>
+            <li>《陕西会碑记》. 乾隆二十七年（1762）.</li>
+            <li>Greenfield, J. "Design-Driven Research in Digital Humanities." <em>DHQ</em>, 2021.</li>
+            <li>Green, M. C., & Brock, T. C. "The role of transportation in the persuasiveness of public narratives." <em>Journal of Personality and Social Psychology</em>, 2000.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 15. ACKNOWLEDGMENTS -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">15</span>
+          <span class="section-title">致谢</span>
+          <span class="section-title-en">Acknowledgments</span>
+        </div>
+        <div class="section-body">
+          <p class="no-indent" style="font-size:3.4mm;">感谢武汉大学数字人文研究中心的指导与支持。本项目所有文化数据均来源于公开学术文献，角色肖像由AI辅助生成。项目代码开源，欢迎学术交流与合作。</p>
+        </div>
+      </section>
+
+      <!-- 16. GEOGRAPHIC ROUTE MAP -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">16</span>
+          <span class="section-title">画卷地理路线</span>
+          <span class="section-title-en">Geographic Route</span>
+        </div>
+        <div class="section-body">
+          <div class="chart-container">
+            <svg viewBox="0 0 260 140" style="width:100%;height:auto;">
+              <!-- 背景河流 -->
+              <path d="M 10 70 Q 65 55, 130 70 T 250 70" fill="none" stroke="#4A7C8F" stroke-width="6" opacity="0.3"/>
+              <path d="M 10 75 Q 65 60, 130 75 T 250 75" fill="none" stroke="#4A7C8F" stroke-width="3" opacity="0.2"/>
+              <!-- 路线 -->
+              <line x1="20" y1="70" x2="240" y2="70" stroke="#B22222" stroke-width="2" stroke-dasharray="4,2"/>
+              <!-- 地点标记 -->
+              <circle cx="20" cy="70" r="5" fill="#B22222"/>
+              <text x="20" y="60" font-size="7" text-anchor="middle" fill="#3D2914" font-weight="700">虎丘</text>
+              <circle cx="55" cy="70" r="4" fill="#C17817"/>
+              <text x="55" y="95" font-size="6" text-anchor="middle" fill="#6B4423">山塘街</text>
+              <circle cx="95" cy="70" r="4" fill="#C17817"/>
+              <text x="95" y="60" font-size="6" text-anchor="middle" fill="#6B4423">阊门</text>
+              <circle cx="130" cy="70" r="4" fill="#C17817"/>
+              <text x="130" y="95" font-size="6" text-anchor="middle" fill="#6B4423">胥门</text>
+              <circle cx="160" cy="70" r="4" fill="#C17817"/>
+              <text x="160" y="60" font-size="6" text-anchor="middle" fill="#6B4423">石湖</text>
+              <circle cx="185" cy="70" r="4" fill="#C17817"/>
+              <text x="185" y="95" font-size="6" text-anchor="middle" fill="#6B4423">木渎</text>
+              <circle cx="210" cy="70" r="4" fill="#C17817"/>
+              <text x="210" y="60" font-size="6" text-anchor="middle" fill="#6B4423">灵岩山</text>
+              <circle cx="240" cy="70" r="5" fill="#B22222"/>
+              <text x="240" y="95" font-size="7" text-anchor="middle" fill="#3D2914" font-weight="700">天平山</text>
+              <!-- 方向 -->
+              <polygon points="245,70 240,67 240,73" fill="#B22222"/>
+              <text x="130" y="120" font-size="6" text-anchor="middle" fill="#8B7355">画卷展开方向 → 自右向左徐徐展开</text>
+              <text x="130" y="130" font-size="5" text-anchor="middle" fill="#8B7355">Scroll Direction: Right to Left</text>
+            </svg>
+            <div class="caption">Fig.6 《姑苏繁华图》地理路线示意图：自天平山至虎丘，全长1241厘米</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-left">
+      <strong>《姑苏繁华图》数字人文活化展</strong><br>
+      Digital Humanities Activation of Prosperous Suzhou<br>
+      文化数据可视化课程 · 2026 Spring
+    </div>
+    <div class="footer-center">
+      <div class="qr-placeholder">QR</div>
+      <div style="font-size:3mm;color:var(--light-brown);margin-top:1mm;">扫码体验</div>
+    </div>
+    <div class="footer-right">
+      <strong>Contact:</strong> Wuhan University<br>
+      <strong>Project:</strong> github.com/gusufanhuatu<br>
+      <strong>License:</strong> CC BY-NC-SA 4.0
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

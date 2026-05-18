@@ -46,31 +46,31 @@
   <!-- ═══ 功能引导浮层 ═══ -->
   <div id="tutorial-overlay">
     <div class="tutorial-card">
-      <div class="tutorial-title">操作指引</div>
+      <div class="tutorial-title">操作指引 <span style="font-size:11px;font-weight:400;color:rgba(212,175,55,0.45);letter-spacing:0.1em">（沉浸式NPC指引功能完成后将移除此页面）</span></div>
       <div class="tutorial-items">
         <div class="tutorial-item">
-          <div class="tutorial-text"><strong>滚动浏览</strong> — 上下滚动鼠标/手指，画卷自右向左徐徐展开</div>
+          <div class="tutorial-text"><strong>滚动浏览</strong> — 滚动鼠标/手指，画卷自右向左徐徐展开</div>
         </div>
         <div class="tutorial-item">
-          <div class="tutorial-text"><strong>文化场景</strong> — 点击画卷上的红色脉冲圆点，观看文化场景动态视频</div>
+          <div class="tutorial-text"><strong>场景互动</strong> — 点击红色圆点观看视频，点击底部地名跳转场景</div>
         </div>
         <div class="tutorial-item">
-          <div class="tutorial-text"><strong>场景详情</strong> — 点击底部进度条上的地名标签，查看场景详细信息</div>
+          <div class="tutorial-text"><strong>更多功能</strong> — 左下角色标签可切换视角/查看档案，右下按钮可近观/寻迹</div>
         </div>
         <div class="tutorial-item">
-          <div class="tutorial-text"><strong>角色信息</strong> — 点击左下角角色标签，查看当前角色完整档案</div>
-        </div>
-        <div class="tutorial-item">
-          <div class="tutorial-text"><strong>近观画卷</strong> — 点击右下「近观」按钮，放大查看画作细节</div>
-        </div>
-        <div class="tutorial-item">
-          <div class="tutorial-text"><strong>寻迹定位</strong> — 点击「寻迹」按钮，快速定位你在画卷中的位置</div>
-        </div>
-        <div class="tutorial-item">
-          <div class="tutorial-text"><strong>背景音乐</strong> — 点击右下角音乐按钮，随时开关背景音乐</div>
+          <div class="tutorial-text"><strong>隐藏任务</strong> — 浏览至画卷尽头，会触发隐藏彩蛋哦~</div>
         </div>
       </div>
       <button class="tutorial-close" id="tutorialClose">开始</button>
+    </div>
+  </div>
+
+  <!-- ═══ 叙事引入悬浮层 ═══ -->
+  <div id="prologue-overlay">
+    <div class="prologue-card">
+      <div class="prologue-seal">姑蘇繁華圖</div>
+      <div class="prologue-text" id="prologueText"></div>
+      <button class="prologue-start" id="prologueStart">展开画卷</button>
     </div>
   </div>
 
@@ -147,11 +147,15 @@
     </div>
 
     <!-- 放大镜 -->
-    <button class="magnifier-btn" id="magnifierBtn" title="近观">近观</button>
+    <button class="magnifier-btn" id="magnifierBtn" title="近观">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+    </button>
 
     <!-- 我在哪 -->
     <button class="findme-btn" id="findmeBtn" title="寻迹">寻迹</button>
 
+    <!-- 识姑苏（触发游戏后才显示） -->
+    <button class="quiz-btn" id="quizBtn" title="识姑苏">识姑苏</button>
 
   </nav>
 
@@ -169,6 +173,9 @@
         </div>
       </div>
       <div class="rp-bio"></div>
+      <div class="rp-divider"></div>
+      <div class="rp-switch-title">切换角色视角</div>
+      <div class="rp-switch-list" id="roleSwitchList"></div>
     </div>
   </div>
 
@@ -225,7 +232,6 @@
   <!-- ═══ 游戏叠加层 ═══ -->
   <div id="game-overlay">
     <div class="game-overlay-bar">
-      <button class="game-overlay-close" id="gameOverlayClose">&times;</button>
       <span class="game-overlay-title">看图识俗</span>
     </div>
     <iframe id="gameFrame" src="" allowfullscreen></iframe>

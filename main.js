@@ -267,7 +267,26 @@
     document.getElementById('tutorialClose').addEventListener('click', () => {
       overlay.classList.remove('show');
       initScroll();
+      // 画卷加载完成后显示叙事悬浮卡
+      setTimeout(() => showPrologue(), 800);
     });
+  }
+
+  // ─── 叙事引入悬浮层 ──────────────────────────────────
+  const PROLOGUE_TEXT = '乾隆二十四年（1759年），宫廷画师徐扬奉旨绘成此卷。画卷自太湖起笔，经灵岩山、木渎镇、石湖，穿胥门、阊门，至虎丘山塘街止，全长十二余米，以散点透视法绘就人物一万二千余、房屋二千余、船只四百余，被誉为研究清代苏州城市经济文化的"图像百科全书"。';
+
+  function showPrologue() {
+    const prologueEl = document.getElementById('prologue-overlay');
+    const textEl = document.getElementById('prologueText');
+    if (!prologueEl) return;
+
+    textEl.textContent = PROLOGUE_TEXT;
+    prologueEl.classList.add('show');
+
+    document.getElementById('prologueStart').addEventListener('click', () => {
+      prologueEl.classList.remove('show');
+      setTimeout(() => { prologueEl.style.display = 'none'; }, 600);
+    }, { once: true });
   }
 
   // ─── 角色信息面板 ──────────────────────────────────────
@@ -285,8 +304,44 @@
       panel.querySelector('.rp-title').textContent = ch.title;
       panel.querySelector('.rp-age').textContent = '年龄：' + ch.age;
       panel.querySelector('.rp-bio').textContent = ch.bio;
+
+      // 渲染角色切换列表
+      const switchList = document.getElementById('roleSwitchList');
+      switchList.innerHTML = '';
+      ['scholar', 'merchant', 'commoner'].forEach(key => {
+        const c = CHARACTERS[key];
+        if (!c) return;
+        const item = document.createElement('div');
+        item.className = 'rp-switch-item' + (key === currentPerspective ? ' active' : '');
+        item.innerHTML = `<img src="${c.image}" alt="${c.name}"><span>${c.name}</span>`;
+        item.addEventListener('click', () => switchCharacter(key));
+        switchList.appendChild(item);
+      });
+
       panel.classList.add('show');
     }
+  }
+
+  function switchCharacter(perspective) {
+    if (perspective === currentPerspective) { closeRolePanel(); return; }
+    currentPerspective = perspective;
+    const ch = CHARACTERS[perspective];
+
+    // 更新底部角色标签
+    dom.roleIcon.innerHTML = `<img src="${ch.image}" alt="${ch.name}" style="width:22px;height:22px;border-radius:50%;object-fit:cover">`;
+    dom.roleName.textContent = ch.name;
+    dom.roleTitle.textContent = ch.title;
+
+    // 更新热点高亮
+    applyPerspectiveHighlight();
+
+    // 刷新当前场景叙事
+    if (currentScene) {
+      const scene = SCENES.find(s => s.id === currentScene);
+      if (scene) showNarrativeForScene(scene);
+    }
+
+    closeRolePanel();
   }
 
   function closeRolePanel() {
@@ -946,7 +1001,9 @@
     document.getElementById('npcAccept').addEventListener('click', () => {
       closeNpcDialog();
       openGame('games/spot-custom/spot-custom.html');
-      showQuizBtn();
+      // 显示识姑苏按钮
+      var btn = document.getElementById('quizBtn');
+      if (btn) btn.style.display = 'flex';
     });
   }
 
@@ -1261,7 +1318,7 @@
   }
 
   function initGameOverlay() {
-    dom.gameOverlayClose.addEventListener('click', closeGame);
+    if (dom.gameOverlayClose) dom.gameOverlayClose.addEventListener('click', closeGame);
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && dom.gameOverlay.classList.contains('show')) {
         closeGame();
@@ -1271,6 +1328,11 @@
     window.addEventListener('message', (e) => {
       if (e.data && e.data.type === 'closeGame') closeGame();
     });
+    // 识姑苏按钮：点击重新打开游戏
+    var quizBtn = document.getElementById('quizBtn');
+    if (quizBtn) {
+      quizBtn.addEventListener('click', () => openGame('games/spot-custom/spot-custom.html'));
+    }
   }
 
   // ═══════════════════════════════════════════════════
