@@ -176,10 +176,10 @@ html, body {
   visibility: visible;
 }
 .prologue-card {
-  max-width: 520px;
-  width: 88vw;
+  max-width: 680px;
+  width: 92vw;
   text-align: center;
-  padding: 40px 36px 32px;
+  padding: 48px 48px 40px;
   background: rgba(26, 26, 26, 0.92);
   border: 1.5px solid rgba(212, 175, 55, 0.3);
   border-radius: 12px;
@@ -203,11 +203,11 @@ html, body {
 }
 .prologue-text {
   font-family: var(--font-serif);
-  font-size: 15px;
-  line-height: 2;
-  color: rgba(245, 240, 230, 0.8);
+  font-size: 16.5px;
+  line-height: 2.1;
+  color: rgba(245, 240, 230, 0.85);
   text-align: justify;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 .prologue-start {
   display: inline-block;
@@ -220,7 +220,7 @@ html, body {
   letter-spacing: 0.2em;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: all 0.25s, opacity 1s ease;
 }
 .prologue-start:hover {
   background: var(--accent-gold);
@@ -736,7 +736,8 @@ html, body {
   z-index: 100;
 }
 
-.hotspot:hover .hotspot-tooltip {
+.hotspot:hover .hotspot-tooltip,
+.hotspot.auto-tooltip .hotspot-tooltip {
   opacity: 1;
 }
 
@@ -1955,8 +1956,7 @@ html, body {
 }
 
 .zoom-overlay-frame.video-mode .zoom-overlay-scene-name {
-  bottom: auto;
-  top: 16px;
+  display: none;
 }
 
 .zoom-overlay-frame.video-mode .zoom-overlay-story {
@@ -1970,6 +1970,10 @@ html, body {
   transform: none;
   border-radius: 0 4px 4px 0;
   order: -1;
+  padding: 28px 24px;
+  font-size: 16px;
+  line-height: 2;
+  overflow-y: auto;
 }
 
 .zoom-overlay-frame.video-mode .zoom-overlay-story.visible {
@@ -2038,11 +2042,11 @@ html, body {
 }
 
 .zoom-overlay-story .story-title {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--accent-cinnabar);
-  margin-bottom: 8px;
-  padding-bottom: 6px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid rgba(178, 34, 34, 0.2);
 }
 

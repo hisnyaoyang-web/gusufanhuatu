@@ -273,15 +273,64 @@
   }
 
   // ─── 叙事引入悬浮层 ──────────────────────────────────
-  const PROLOGUE_TEXT = '乾隆二十四年（1759年），宫廷画师徐扬奉旨绘成此卷。画卷自太湖起笔，经灵岩山、木渎镇、石湖，穿胥门、阊门，至虎丘山塘街止，全长十二余米，以散点透视法绘就人物一万二千余、房屋二千余、船只四百余，被誉为研究清代苏州城市经济文化的"图像百科全书"。';
+  const PROLOGUE_TEXTS = {
+    scholar: '乾隆二十四年，暮春三月。苏州府秀才沈鹤年束书负笈，自吴县乡下沿运河赴府试。船过灵岩山，恰逢文人士子雅集山间，吟诗唱和；入木渎镇，闻三弦弹唱之声，遂初园中昆曲正酣。他一路走一路看——枫桥米市、胥门官衙、阊门商埠、山塘义学、虎丘古刹——这姑苏城中，读书人的前程、市井的烟火、商贾的算盘，都融在这一幅长卷里。且随沈秀才的脚步，入画一观。',
+    merchant: '乾隆二十四年，仲春时节。闽商陈瑞丰的货船自枫桥码头缓缓靠岸。瑞丰客居苏州十二载，于阊门外开设「瑞丰号」，经营丝绸洋货。这一日，他照例巡视生意：枫桥米市验粮、胥门钱庄兑银、阊门商铺盘点、山塘分号查账。沿途所见——灵岩山下的茶商、木渎镇上的绸缎庄、胥江上穿梭的货船、阊门码头的漕运——处处是商机，步步有算计。且随陈掌柜的目光，看这姑苏繁华背后的生意经。',
+    commoner: '乾隆二十四年，春暖花开。山塘街面馆帮工阿桂照例寅时起身和面熬汤。这日恰逢虎丘庙会，老板大方放了他半天假。阿桂兴冲冲从山塘街出发，一路东行——黄鹂坊桥有人家办喜事，阊门城楼下有人走绳索耍把戏，胥江岸边船来船往好不热闹。他不识字，不懂诗文，却记得住每条巷子的名字、每个摊贩的吆喝。且随阿桂的脚步，看看这姑苏城里寻常百姓的烟火日子。',
+  };
 
   function showPrologue() {
     const prologueEl = document.getElementById('prologue-overlay');
     const textEl = document.getElementById('prologueText');
     if (!prologueEl) return;
 
-    textEl.textContent = PROLOGUE_TEXT;
+    const text = PROLOGUE_TEXTS[currentPerspective] || PROLOGUE_TEXTS.scholar;
+    // 逐字渐入：12 秒打完，每个字符用 span 包裹，opacity 渐变
+    const totalChars = text.length;
+    const charDelay = 12000 / totalChars;
+    textEl.innerHTML = text.split('').map(ch =>
+      `<span style="opacity:0;transition:opacity 0.8s ease">${ch}</span>`
+    ).join('');
+    const spans = textEl.querySelectorAll('span');
+    let charIndex = 0;
+    const typeTimer = setInterval(() => {
+      if (charIndex < spans.length) {
+        spans[charIndex].style.opacity = '1';
+        charIndex++;
+      } else {
+        clearInterval(typeTimer);
+        // 文字全部出现后显示展开画卷按钮
+        if (startBtn) startBtn.style.opacity = '1';
+      }
+    }, charDelay);
+
+    // 展开画卷按钮先隐藏，文字打完后显示
+    const startBtn = document.getElementById('prologueStart');
+    if (startBtn) startBtn.style.opacity = '0';
+
     prologueEl.classList.add('show');
+
+    // 同时启动自动滚动（匀速到 10%）
+    const trigger = ScrollTrigger.getAll()[0];
+    if (trigger) {
+      calcDemoSpeed();
+      const targetY = trigger.end * 0.08;
+      let lastT = 0;
+      function autoStep(now) {
+        if (!lastT) lastT = now;
+        const dt = now - lastT;
+        lastT = now;
+        const curY = window.scrollY;
+        if (curY < targetY) {
+          window.scrollTo(0, Math.min(curY + demoSpeed * dt, targetY));
+          requestAnimationFrame(autoStep);
+        } else {
+          // 滚动到 10% 停下，标记 demoStarted
+          demoStarted = true;
+        }
+      }
+      requestAnimationFrame(autoStep);
+    }
 
     document.getElementById('prologueStart').addEventListener('click', () => {
       prologueEl.classList.remove('show');
@@ -382,6 +431,10 @@
               currentScrollProgress = self.progress;
               updateProgress(self.progress);
               updateScene(self.progress);
+              // 滚动时刷新放大镜
+              if (magnifierActive && lastMagnifierEvent) {
+                onMagnifierMove(lastMagnifierEvent);
+              }
             },
           },
         }
@@ -434,7 +487,7 @@
       video.loop = true;
       video.muted = false;
       video.playsInline = true;
-      video.controls = true;
+      video.controls = false;
       content.appendChild(video);
 
       // 暂停背景音乐
@@ -532,7 +585,7 @@
       };
     }
 
-    // 显示场景名
+    // 显示场景名（视频模式下隐藏）
     dom.zoomOverlaySceneName.textContent = culturalName || '';
 
     // 显示故事荟（如果有对应文化场景名）
@@ -997,7 +1050,12 @@
       <button class="npc-btn-secondary" id="npcDismiss">下次再说</button>
       <button class="npc-btn-primary" id="npcAccept">好，我来帮你</button>
     `;
-    document.getElementById('npcDismiss').addEventListener('click', closeNpcDialog);
+    document.getElementById('npcDismiss').addEventListener('click', () => {
+      closeNpcDialog();
+      // 拒绝也显示识姑苏按钮
+      var btn = document.getElementById('quizBtn');
+      if (btn) btn.style.display = 'flex';
+    });
     document.getElementById('npcAccept').addEventListener('click', () => {
       closeNpcDialog();
       openGame('games/spot-custom/spot-custom.html');
@@ -1039,13 +1097,18 @@
   //  12. 放大镜
   // ═══════════════════════════════════════════════════
   let magnifierActive = false;
+  let lastMagnifierEvent = null; // 缓存最后鼠标事件，供滚动时重绘
 
   function initMagnifier() {
     dom.magnifierBtn.addEventListener('click', toggleMagnifier);
 
     // 鼠标移动时更新镜片
-    dom.paintingSection.addEventListener('mousemove', onMagnifierMove);
+    dom.paintingSection.addEventListener('mousemove', (e) => {
+      lastMagnifierEvent = e;
+      onMagnifierMove(e);
+    });
     dom.paintingSection.addEventListener('mouseleave', () => {
+      lastMagnifierEvent = null;
       dom.magnifierLens.classList.remove('show');
     });
   }
@@ -1109,39 +1172,50 @@
     const srcY = imgY * dpr - srcH * dpr / 2;
 
     // 从 zoom-wrapper 截图绘制
-    // 用 canvas drawImage 从各 img 元素取源
+    // 放大镜区域可能跨多张 tile，逐张绘制
     const images = zoomWrapper.querySelectorAll('img');
     const wrapperRect = zoomWrapper.getBoundingClientRect();
-    // 鼠标相对于 zoom-wrapper 左上角的偏移（像素）
     const pxInWrapper = e.clientX - wrapperRect.left;
     const pyInWrapper = e.clientY - wrapperRect.top;
 
-    // 找到鼠标落在哪张图上
-    let accumWidth = 0;
-    for (const img of images) {
-      const imgW = img.getBoundingClientRect().width;
-      if (pxInWrapper < accumWidth + imgW) {
-        // 鼠标在这张图上
-        const localX = pxInWrapper - accumWidth;
-        const localY = pyInWrapper;
-        // 自然尺寸与显示尺寸的比率
-        const scaleImg = img.naturalWidth / imgW;
-        const srcCenterX = localX * scaleImg;
-        const srcCenterY = localY * scaleImg;
-        // 按 ZOOM 计算源区域（自然像素）
-        const srcHalfW = (LENS_SIZE / ZOOM / 2) * scaleImg;
-        const srcHalfH = (LENS_SIZE / ZOOM / 2) * scaleImg;
+    // 放大镜在 wrapper 坐标系中覆盖的范围
+    const halfView = LENS_SIZE / ZOOM / 2;
+    const viewLeft = pxInWrapper - halfView;
+    const viewRight = pxInWrapper + halfView;
+    const viewTop = pyInWrapper - halfView;
+    const viewBottom = pyInWrapper + halfView;
 
-        ctx.drawImage(
-          img,
-          srcCenterX - srcHalfW, srcCenterY - srcHalfH,
-          srcHalfW * 2, srcHalfH * 2,
-          0, 0,
-          lens.width, lens.height
-        );
-        break;
+    for (const img of images) {
+      // 用每张图的实际 viewport 位置算它在 wrapper 中的偏移
+      const imgRect = img.getBoundingClientRect();
+      const imgLeft = imgRect.left - wrapperRect.left;
+      const imgRight = imgLeft + imgRect.width;
+
+      // 判断这张图是否和放大镜可视范围有交集
+      if (imgRight > viewLeft && imgLeft < viewRight) {
+        const scaleImg = img.naturalWidth / imgRect.width;
+        // 裁剪区域（wrapper 坐标系）
+        const clipLeft = Math.max(viewLeft, imgLeft);
+        const clipRight = Math.min(viewRight, imgRight);
+        const clipTop = Math.max(viewTop, 0);
+        const clipBottom = viewBottom;
+        const clipW = clipRight - clipLeft;
+        const clipH = clipBottom - clipTop;
+
+        // 源区域（图片自然像素）
+        const sx = (clipLeft - imgLeft) * scaleImg;
+        const sy = clipTop * scaleImg;
+        const sw = clipW * scaleImg;
+        const sh = clipH * scaleImg;
+
+        // 目标区域（canvas 像素）
+        const dx = (clipLeft - viewLeft) * ZOOM * dpr;
+        const dy = (clipTop - viewTop) * ZOOM * dpr;
+        const dw = clipW * ZOOM * dpr;
+        const dh = clipH * ZOOM * dpr;
+
+        ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
       }
-      accumWidth += imgW;
     }
 
     ctx.restore();
@@ -1376,6 +1450,126 @@
       resizeTimer = setTimeout(() => { ScrollTrigger.refresh(); }, 250);
     });
   }
+
+  // ═══════════════════════════════════════════════════
+  //  DEMO MODE — 按 D 键滚动，到场景/文化热点中心自动停下
+  // ═══════════════════════════════════════════════════
+  let demoMode = false;
+  let demoRaf = null;
+  let demoLastTime = 0;
+  let demoSpeed = 0;
+
+  function getDemoEndY() {
+    const trigger = ScrollTrigger.getAll()[0];
+    return trigger ? trigger.end : document.body.scrollHeight;
+  }
+
+  function calcDemoSpeed() {
+    const endY = getDemoEndY();
+    demoSpeed = endY / 180000; // 180秒走完全程
+  }
+
+  // 额外停靠的文化热点（不在场景中心的）
+  const EXTRA_STOP_X = [66.5, 33.3, 27.2, 10.0]; // 遂初园堂会、府衙府试、怡老园、山塘花市
+
+  // 计算所有停靠点：场景中心 + 额外文化热点
+  function getAllStopYList() {
+    const trigger = ScrollTrigger.getAll()[0];
+    if (!trigger) return [];
+    const scrollRange = trigger.end - trigger.start;
+
+    const sceneStops = SCENES.map(scene => {
+      const progress = sceneToProgress(scene.x);
+      return trigger.start + scrollRange * progress;
+    });
+
+    const extraStops = EXTRA_STOP_X.map(x => {
+      const progress = sceneToProgress(x);
+      return trigger.start + scrollRange * progress;
+    });
+
+    // 合并、去重（距离太近的合并，阈值 200px）
+    const all = [...sceneStops, ...extraStops].sort((a, b) => a - b);
+    const merged = [all[0]];
+    for (let i = 1; i < all.length; i++) {
+      if (all[i] - merged[merged.length - 1] > 200) {
+        merged.push(all[i]);
+      }
+    }
+    return merged;
+  }
+
+  function getNextStopY(currentY, stopList) {
+    const threshold = demoSpeed * 500;
+    for (const stopY of stopList) {
+      if (stopY > currentY + threshold) return stopY;
+    }
+    return getDemoEndY();
+  }
+
+  let demoTargetY = Infinity;
+
+  // 自动停下时，显示可见文化热点的标题
+  function showAutoTooltips() {
+    const hotspots = document.querySelectorAll('.cultural-hotspot');
+    hotspots.forEach(hs => {
+      const rect = hs.getBoundingClientRect();
+      // 判断是否在可视区域内
+      if (rect.left > 0 && rect.right < window.innerWidth &&
+          rect.top > 0 && rect.bottom < window.innerHeight) {
+        hs.classList.add('auto-tooltip');
+      }
+    });
+  }
+
+  // 继续滚动前，隐藏自动显示的标题
+  function hideAutoTooltips() {
+    document.querySelectorAll('.auto-tooltip').forEach(el => {
+      el.classList.remove('auto-tooltip');
+    });
+  }
+
+  function demoStep(now) {
+    if (!demoMode) return;
+    if (!demoLastTime) { demoLastTime = now; }
+    const dt = now - demoLastTime;
+    demoLastTime = now;
+
+    const currentY = window.scrollY;
+    const nextY = Math.min(currentY + demoSpeed * dt, demoTargetY);
+    window.scrollTo(0, nextY);
+
+    if (nextY < demoTargetY) {
+      demoRaf = requestAnimationFrame(demoStep);
+    } else {
+      if (demoRaf) { cancelAnimationFrame(demoRaf); demoRaf = null; }
+      demoMode = false;
+      demoLastTime = 0;
+      showAutoTooltips();
+      console.log('[Demo] 到达停靠点 — 按 D 继续');
+    }
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'd' || e.key === 'D') {
+      if (demoMode) {
+        if (demoRaf) { cancelAnimationFrame(demoRaf); demoRaf = null; }
+        demoMode = false;
+        demoLastTime = 0;
+        hideAutoTooltips();
+        console.log('[Demo] 已暂停 — 按 D 继续');
+      } else {
+        calcDemoSpeed();
+        hideAutoTooltips();
+        const stopList = getAllStopYList();
+        demoTargetY = getNextStopY(window.scrollY, stopList);
+        demoMode = true;
+        demoLastTime = 0;
+        console.log('[Demo] 滚动至下一停靠点 — 按 D 暂停');
+        demoRaf = requestAnimationFrame(demoStep);
+      }
+    }
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
